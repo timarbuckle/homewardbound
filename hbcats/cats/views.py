@@ -27,4 +27,4 @@ def update_cats_view(request):
     updater.update_cats()
     
     # After updating, redirect back to the cat list view
-    return redirect('cat_list_view')
+    return redirect('cat_list')
