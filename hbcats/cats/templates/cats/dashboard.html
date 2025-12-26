@@ -1,0 +1,47 @@
+{% extends 'cats/base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-800">Cat Registry</h1>
+            <p class="text-slate-500">Manage and track feline sightings</p>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <button hx-post="{% url 'update_cats' %}"
+                    hx-target="#stats-display"
+                    hx-indicator="#update-spinner"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition flex items-center">
+                <span id="update-spinner" class="htmx-indicator animate-spin mr-2">↻</span>
+                Run Database Update
+            </button>
+        </div>
+    </div>
+
+    <div id="stats-display" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {% include 'cats/stats_bar.html' %}
+    </div>
+
+    <div class="flex bg-white p-2 rounded-xl shadow-sm mb-6 w-fit border border-slate-200">
+        <button hx-get="{% url 'cat_list' %}?filter=all" hx-target="#cat-table" 
+                class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700">
+            All Cats
+        </button>
+        <button hx-get="{% url 'cat_list' %}?filter=new" hx-target="#cat-table" 
+                class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700">
+            New Arrivals
+        </button>
+        <button hx-get="{% url 'cat_list' %}?filter=adopted" hx-target="#cat-table" 
+                class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700">
+            Recently Adopted
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div id="cat-table">
+            {% include 'cats/cat_table.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
