@@ -9,3 +9,9 @@ class Cat(models.Model):
     first_seen = models.DateTimeField(auto_now_add=True)
     last_seen = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+
+class UpdateLog(models.Model):
+    last_updated = models.DateTimeField(auto_now=True)
+    total_cats = models.IntegerField(default=0)
+    new_cats = models.IntegerField(default=0)

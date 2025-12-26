@@ -1,10 +1,12 @@
 from selenium import webdriver
 from time import sleep
 from bs4 import BeautifulSoup
-from cats.models import Cat
+from cats.models import Cat, UpdateLog
 import re
 from datetime import datetime
+import logging
 
+logger = logging.getLogger(__name__)
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.chrome.service import Service as ChromeService
 # service = ChromeService(executable_path='/usr/local/bin/chrome-mac-arm64')
@@ -13,6 +15,7 @@ from datetime import datetime
 class UpdateCats:
     def update_cats(self):
         driver = webdriver.Safari()
+        driver.implicitly_wait(0.5)
         # driver.get("https://www.homewardboundcats.org/adopt/")
         driver.get("https://www.shelterluv.com/embed/5575")
 
@@ -25,21 +28,17 @@ class UpdateCats:
         while True:
             # Scroll down to bottom
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
             # Wait for new content to load
             sleep(scroll_pause_time)
-
             # Calculate new scroll height and compare with last scroll height
             new_height = driver.execute_script("return document.body.scrollHeight")
-
             # If the heights are the same, you have reached the bottom
             if new_height == last_height:
                 break
-
             # Update the height for the next iteration
             last_height = new_height
 
-        print("Finished scrolling and loading all dynamic content.")
+        # print("Finished scrolling and loading all dynamic content.")
         # with open("cats.txt", "w") as f:
         #    f.write(driver.page_source)
 
@@ -51,7 +50,7 @@ class UpdateCats:
         # Since class names can be long and change, we can target the anchor tag
         # or the inner div if that's more stable. Let's target the inner div:
         item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
-
+        new_cat_count = 0
         # 3. Loop through each container and extract the data
         for container in item_containers:
             # 3a. Extract the Image URL
@@ -71,10 +70,23 @@ class UpdateCats:
                 obj.last_seen = datetime.now()
                 obj.save()
             except Cat.DoesNotExist:
+                new_cat_count += 1
                 Cat.objects.create(name=name, image_url=image_url, image_cy=image_cy)
 
             # print(f"Name: {name}, Image URL: {image_url}, image_cy: {image_cy}")
+        driver.quit()
+        logger.info(
+            f"Total cats: {len(item_containers)}. New cats added: {new_cat_count}"
+        )
+        UpdateLog.objects.create(
+            total_cats=len(item_containers), new_cats=new_cat_count
+        )
 
+        # print("Finished scrolling and loading all dynamic content.")
+        # with open("cats.txt", "w") as f:
+        #    f.write(driver.page_source)
+
+    # not used
     def get_data_v(self, image_tag):
         data_v_pattern = re.compile(r"^data-v-")
         data_v_id = "N/A"

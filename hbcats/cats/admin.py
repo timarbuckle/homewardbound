@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 # from django.db.models import Count
 
 # Register your models here.
-from .models import Cat
+from .models import Cat, UpdateLog
 from datetime import date, time, datetime, timedelta
 
 
@@ -163,4 +163,13 @@ class CatAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
 
+class UpdateLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "last_updated",
+        "total_cats",
+        "new_cats",
+    )
+
+
 admin.site.register(Cat, CatAdmin)
+admin.site.register(UpdateLog, UpdateLogAdmin)
