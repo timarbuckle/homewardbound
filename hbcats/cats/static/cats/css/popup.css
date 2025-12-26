@@ -1,0 +1,21 @@
+.hover-container {
+display: inline-block;
+cursor: pointer;
+}
+
+.thumbnail {
+width: 150px;
+display: block;
+}
+
+/* The popup starts completely hidden and has no position logic here */
+.popup-image {
+display: none;
+position: fixed; 
+z-index: 99999; /* Ensure it's above everything */
+border: 3px solid #fff;
+box-shadow: 0 0 15px rgba(0,0,0,0.5);
+max-width: 500px;
+max-height: 90vh;
+pointer-events: none;
+}
