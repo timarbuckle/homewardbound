@@ -1,31 +1,76 @@
 <style>
   .hover-container {
-    position: relative;
     display: inline-block;
+    cursor: pointer;
   }
 
   .thumbnail {
     width: 150px;
-    cursor: pointer;
-  }
-
-  /* The hidden popup */
-  .popup-image {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 110%; /* Positions it to the right of the thumb */
-    z-index: 10;
-    border: 3px solid #fff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    max-width: 500px; /* Limit the "full size" so it fits the screen */
-  }
-
-  /* Show the popup on hover */
-  .hover-container:hover .popup-image {
     display: block;
   }
+
+  /* The popup starts completely hidden and has no position logic here */
+  .popup-image {
+    display: none;
+    position: fixed; 
+    z-index: 99999; /* Ensure it's above everything */
+    border: 3px solid #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    max-width: 500px;
+    max-height: 90vh;
+    pointer-events: none;
+  }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const containers = document.querySelectorAll('.hover-container');
+
+  containers.forEach(container => {
+    const popup = container.querySelector('.popup-image');
+    
+    if (!popup) return; // Skip if no popup found in this container
+
+    container.addEventListener('mousemove', (e) => {
+      // Make visible
+      popup.style.display = 'block';
+
+      const gap = 20;
+      const pageWidth = window.innerWidth;
+      const pageHeight = window.innerHeight;
+      
+      // Get the size of the popup image
+      const popupWidth = popup.offsetWidth;
+      const popupHeight = popup.offsetHeight;
+
+      // Calculate position
+      let x = e.clientX + gap;
+      let y = e.clientY + gap;
+
+      // Flip left if it hits the right edge
+      if (x + popupWidth > pageWidth) {
+        x = e.clientX - popupWidth - gap;
+      }
+
+      // Shift up if it hits the bottom edge
+      if (y + popupHeight > pageHeight) {
+        y = e.clientY - popupHeight - gap;
+      }
+
+      // Final boundary check for top/left
+      if (x < 0) x = gap;
+      if (y < 0) y = gap;
+
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+    });
+
+    container.addEventListener('mouseleave', () => {
+      popup.style.display = 'none';
+    });
+  });
+});
+</script>
 
 <table class="w-full text-left border-collapse">
     <thead class="bg-slate-50 border-b border-slate-200">
