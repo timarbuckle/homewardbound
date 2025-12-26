@@ -31,12 +31,13 @@ class RecentCatsFilter(admin.SimpleListFilter):
         start_datetime = timezone.make_aware(
             timezone.datetime.combine(yesterday, time.min)
         )
-        end_datetime = timezone.make_aware(timezone.datetime.combine(today, time.min))
+        #end_datetime = timezone.make_aware(timezone.datetime.combine(today, time.min))
         if self.value() == "0days":
             return queryset.filter(first_seen__gte=today)
         if self.value() == "1days":
             return queryset.filter(
-                last_seen__gte=start_datetime, last_seen__lte=end_datetime
+                adopted=True,
+                last_updated__gte=start_datetime
             )
             # return queryset.filter(
             #    last_seen__lte=datetime.combine(datetime.today(), time.min)

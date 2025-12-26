@@ -1,4 +1,7 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+
 from time import sleep
 from bs4 import BeautifulSoup
 from cats.models import Cat, UpdateLog
@@ -14,7 +17,18 @@ logger = logging.getLogger(__name__)
 
 class UpdateCats:
     def update_cats(self):
-        driver = webdriver.Safari()
+        #driver = webdriver.Safari()
+        #driver = webdriver.Chrome()
+        #options = wedriver.get_default_chrome_options()
+
+        options = Options()
+        options.binary_location = "/usr/bin/chromium-browser"
+        options.add_argument("--headless")  # Run without a GUI
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+
+        service = Service(executable_path="/usr/bin/chromedriver")
+        driver = webdriver.Chrome(service=service, options=options)
         driver.implicitly_wait(0.5)
         # driver.get("https://www.homewardboundcats.org/adopt/")
         driver.get("https://www.shelterluv.com/embed/5575")
@@ -51,6 +65,7 @@ class UpdateCats:
         # or the inner div if that's more stable. Let's target the inner div:
         item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
         new_cat_count = 0
+        datetime_now = datetime.now()
         # 3. Loop through each container and extract the data
         for container in item_containers:
             # 3a. Extract the Image URL
@@ -67,19 +82,34 @@ class UpdateCats:
             # Store the results
             try:
                 obj = Cat.objects.get(image_cy=image_cy)
-                obj.last_seen = datetime.now()
+                obj.last_seen = datetime_now
                 obj.save()
             except Cat.DoesNotExist:
                 new_cat_count += 1
-                Cat.objects.create(name=name, image_url=image_url, image_cy=image_cy)
+                Cat.objects.create(
+                    name=name,
+                    image_url=image_url,
+                    image_cy=image_cy,
+                    first_seen=datetime_now,
+                    last_seen=datetime_now)
 
             # print(f"Name: {name}, Image URL: {image_url}, image_cy: {image_cy}")
         driver.quit()
+
+        # calculate number of cats adopted
+        adopted = Cat.objects.filter(last_seen__lt=datetime_now, adopted=False)
+        for cat in adopted:
+            cat.adopted = True
+            cat.save()
+
         logger.info(
             f"Total cats: {len(item_containers)}. New cats added: {new_cat_count}"
         )
         UpdateLog.objects.create(
-            total_cats=len(item_containers), new_cats=new_cat_count
+            total_cats=len(item_containers),
+            new_cats=new_cat_count,
+            adopted_cats=adopted.count(),
+            last_updated=datetime_now
         )
 
         # print("Finished scrolling and loading all dynamic content.")
