@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service
 
 from time import sleep
 from bs4 import BeautifulSoup
-from cats.models import Cat, UpdateLog
+from cats.models import Cat, UpdateLog, CatStatus
 import re
 from datetime import datetime
 import logging
@@ -17,13 +17,17 @@ logger = logging.getLogger(__name__)
 
 class UpdateCats:
     def update_cats(self):
+
+        # reset status of all NEW cats to AVAILABLE
+        Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
+        
         #driver = webdriver.Safari()
         #driver = webdriver.Chrome()
         #options = wedriver.get_default_chrome_options()
 
         options = Options()
         options.binary_location = "/usr/bin/chromium-browser"
-        options.add_argument("--headless")  # Run without a GUI
+        #options.add_argument("--headless")  # Run without a GUI
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
@@ -52,10 +56,6 @@ class UpdateCats:
             # Update the height for the next iteration
             last_height = new_height
 
-        # print("Finished scrolling and loading all dynamic content.")
-        # with open("cats.txt", "w") as f:
-        #    f.write(driver.page_source)
-
         # 1. Initialize Beautiful Soup
         soup = BeautifulSoup(driver.page_source, "html.parser")
 
@@ -65,9 +65,11 @@ class UpdateCats:
         # or the inner div if that's more stable. Let's target the inner div:
         item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
         new_cat_count = 0
+        total_cats = 0
         datetime_now = datetime.now()
         # 3. Loop through each container and extract the data
         for container in item_containers:
+            total_cats += 1
             # 3a. Extract the Image URL
             # The image is inside the <img> tag
             image_tag = container.find("img")
@@ -83,6 +85,10 @@ class UpdateCats:
             try:
                 obj = Cat.objects.get(image_cy=image_cy)
                 obj.last_seen = datetime_now
+                # handle if cat was adopted and is now back
+                if obj.status == CatStatus.ADOPTED:
+                    new_cat_count += 1
+                    obj.status = CatStatus.NEW
                 obj.save()
             except Cat.DoesNotExist:
                 new_cat_count += 1
@@ -91,7 +97,8 @@ class UpdateCats:
                     image_url=image_url,
                     image_cy=image_cy,
                     first_seen=datetime_now,
-                    last_seen=datetime_now)
+                    last_seen=datetime_now,
+                    status=CatStatus.NEW)
 
             # print(f"Name: {name}, Image URL: {image_url}, image_cy: {image_cy}")
         driver.quit()
@@ -103,29 +110,13 @@ class UpdateCats:
             cat.save()
 
         logger.info(
-            f"Total cats: {len(item_containers)}. New cats added: {new_cat_count}"
+            f"Total cats: {total_cats}. New cats added: {new_cat_count} Adopted cats: {adopted.count()}"
         )
         UpdateLog.objects.create(
-            total_cats=len(item_containers),
+            total_cats=total_cats,
             new_cats=new_cat_count,
             adopted_cats=adopted.count(),
             last_updated=datetime_now
         )
+        return {"Total": len(item_containers), "New": new_cat_count, "Adopted": adopted.count()}
 
-        # print("Finished scrolling and loading all dynamic content.")
-        # with open("cats.txt", "w") as f:
-        #    f.write(driver.page_source)
-
-    # not used
-    def get_data_v(self, image_tag):
-        data_v_pattern = re.compile(r"^data-v-")
-        data_v_id = "N/A"
-        if image_tag and image_tag.attrs:
-            for attr_name in image_tag.attrs:
-                # 3. Check if the attribute name matches the pattern
-                if data_v_pattern.match(attr_name):
-                    # 4. Extract the ID string (e.g., '6333eea1')
-                    # We strip the prefix 'data-v-' from the attribute name
-                    data_v_id = attr_name.replace("data-v-", "")
-                    break  # Exit the loop once the first match is founde(r'^data-v-')
-        return data_v_id
