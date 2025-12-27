@@ -1,13 +1,15 @@
+import logging
+import platform
+from datetime import datetime
+from time import sleep
+
+from bs4 import BeautifulSoup
 from django.db.models import Q
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from time import sleep
-from bs4 import BeautifulSoup
-from datetime import datetime
-import logging
 
-from cats.models import Cat, UpdateLog, CatStatus
+from cats.models import Cat, CatStatus, UpdateLog
 
 logger = logging.getLogger(__name__)
 # from selenium.webdriver.common.by import By
@@ -17,22 +19,28 @@ logger = logging.getLogger(__name__)
 
 class UpdateCats:
     def update_cats(self):
-
         # reset status of all NEW cats to AVAILABLE
         Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
-        
-        #driver = webdriver.Safari()
-        #driver = webdriver.Chrome()
-        #options = wedriver.get_default_chrome_options()
+
+        # driver = webdriver.Safari()
+        # driver = webdriver.Chrome()
+        # options = wedriver.get_default_chrome_options()
 
         options = Options()
-        options.binary_location = "/usr/bin/chromium-browser"
-        #options.add_argument("--headless")  # Run without a GUI
+        if platform.system() == "Darwin":
+            # options.binary_location = "/usr/local/bin/chromedriver"
+            # options.binary_location = "/opt/homebrew/bin/chromium"
+            driver = webdriver.Safari()
+        elif platform.system() == "Linux":
+            options.binary_location = "/usr/bin/chromium-browser"
+            service = Service(executable_path="/usr/bin/chromedriver")
+            driver = webdriver.Chrome(service=service, options=options)
+        else:
+            driver = webdriver.Chrome()
+        # options.add_argument("--headless")  # Run without a GUI
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
-        service = Service(executable_path="/usr/bin/chromedriver")
-        driver = webdriver.Chrome(service=service, options=options)
         driver.implicitly_wait(0.5)
         # driver.get("https://www.homewardboundcats.org/adopt/")
         driver.get("https://www.shelterluv.com/embed/5575")
@@ -98,12 +106,15 @@ class UpdateCats:
                     image_cy=image_cy,
                     first_seen=datetime_now,
                     last_seen=datetime_now,
-                    status=CatStatus.NEW)
+                    status=CatStatus.NEW,
+                )
 
         driver.quit()
 
         # calculate number of cats adopted, cats not seen today and not marked as adopted
-        adopted = Cat.objects.filter(~Q(status=CatStatus.ADOPTED), last_seen__lt=datetime_now)
+        adopted = Cat.objects.filter(
+            ~Q(status=CatStatus.ADOPTED), last_seen__lt=datetime_now
+        )
         for cat in adopted:
             cat.status = CatStatus.ADOPTED
             cat.save()
@@ -115,7 +126,10 @@ class UpdateCats:
             total_cats=total_cats,
             new_cats=new_cat_count,
             adopted_cats=adopted.count(),
-            last_updated=datetime_now
+            last_updated=datetime_now,
         )
-        return {"Total": len(item_containers), "New": new_cat_count, "Adopted": adopted.count()}
-
+        return {
+            "Total": len(item_containers),
+            "New": new_cat_count,
+            "Adopted": adopted.count(),
+        }
