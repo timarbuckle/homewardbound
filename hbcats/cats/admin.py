@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 # from django.db.models import Count
 
 # Register your models here.
-from .models import Cat, UpdateLog
+from .models import Cat, UpdateLog, CatStatus
 from datetime import date, time, datetime, timedelta
 
 
@@ -21,7 +21,7 @@ class RecentCatsFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return [
             ("0days", "New Cats"),
-            ("1days", "Adopted Cats"),
+            ("1days", "Recently Adopted Cats"),
         ]
 
     def queryset(self, request, queryset):
@@ -33,10 +33,11 @@ class RecentCatsFilter(admin.SimpleListFilter):
         )
         #end_datetime = timezone.make_aware(timezone.datetime.combine(today, time.min))
         if self.value() == "0days":
-            return queryset.filter(first_seen__gte=today)
+            #return queryset.filter(first_seen__gte=today)
+            return queryset.filter(status=CatStatus.NEW)
         if self.value() == "1days":
             return queryset.filter(
-                adopted=True,
+                status=CatStatus.ADOPTED,
                 last_updated__gte=start_datetime
             )
             # return queryset.filter(

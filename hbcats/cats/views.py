@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from .models import Cat
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, time
 
 # Create your views here.
 def cat_list_view(request):
@@ -40,4 +40,26 @@ def update_cats_view(request):
     }
 
     # 3. RETURN ONLY THE STATS PARTIAL
+    return render(request, 'cats/stats_bar.html', context)
+
+@require_POST
+def update_stats_view(request):
+    from .models import Cat, CatStatus
+    #valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW, CatStatus.ADOPTED]
+    valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
+
+    today = timezone.localdate()
+    yesterday = today - timedelta(days=1)
+    start_datetime = timezone.make_aware(
+        timezone.datetime.combine(yesterday, time.min)
+    )
+
+    context = {
+        'total_cats': Cat.objects.filter(status__in=valid_statuses).count(),
+        'new_cats': Cat.objects.filter(status=CatStatus.NEW).count(),
+        'adopted_cats': Cat.objects.filter(
+            status=CatStatus.ADOPTED,
+            last_updated__gte=start_datetime
+        ).count()
+    }
     return render(request, 'cats/stats_bar.html', context)
