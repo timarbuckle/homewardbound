@@ -1,13 +1,13 @@
+from django.db.models import Q
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-
 from time import sleep
 from bs4 import BeautifulSoup
-from cats.models import Cat, UpdateLog, CatStatus
-import re
 from datetime import datetime
 import logging
+
+from cats.models import Cat, UpdateLog, CatStatus
 
 logger = logging.getLogger(__name__)
 # from selenium.webdriver.common.by import By
@@ -100,13 +100,12 @@ class UpdateCats:
                     last_seen=datetime_now,
                     status=CatStatus.NEW)
 
-            # print(f"Name: {name}, Image URL: {image_url}, image_cy: {image_cy}")
         driver.quit()
 
-        # calculate number of cats adopted
-        adopted = Cat.objects.filter(last_seen__lt=datetime_now, adopted=False)
+        # calculate number of cats adopted, cats not seen today and not marked as adopted
+        adopted = Cat.objects.filter(~Q(status=CatStatus.ADOPTED), last_seen__lt=datetime_now)
         for cat in adopted:
-            cat.adopted = True
+            cat.status = CatStatus.ADOPTED
             cat.save()
 
         logger.info(

@@ -15,7 +15,6 @@ class Cat(models.Model):
     first_seen = models.DateTimeField()
     last_seen = models.DateTimeField()
     last_updated = models.DateTimeField(auto_now=True)
-    adopted = models.BooleanField(default=False)
     status = models.CharField(
         max_length=20,
         choices=CatStatus.choices,
