@@ -12,11 +12,6 @@ def get_animal_details(url):
 
     # 2. Parse the HTML
     soup = BeautifulSoup(response.text, "html.parser")
-
-    # Shelterluv embeds often store data in a 'window.shelterluvData'
-    # or similar JavaScript object. If that's not available,
-    # we can scrape the specific labels and values.
-
     tag = soup.find("iframe-animal")
     animal = tag.get(":animal")
     return json.loads(animal)

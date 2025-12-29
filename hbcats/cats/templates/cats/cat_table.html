@@ -1,5 +1,5 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'cats/css/popup.css' %}">
+<link rel="stylesheet" href="{% static 'cats/css/popup.css' %}" />
 <script src="{% static 'cats/js/popup.js' %}"></script>
 
 <table class="w-full text-left border-collapse">
@@ -7,7 +7,13 @@
         <tr>
             <th class="p-4 font-semibold text-slate-700">Cat</th>
             <th class="p-4 font-semibold text-slate-700">Status</th>
-            <th class="p-4 font-semibold text-slate-700">ID</th>
+            <th class="p-4 font-semibold text-slate-700">Birthday</th>
+            <th class="p-4 font-semibold text-slate-700">Intake Date</th>
+            <th class="p-4 font-semibold text-slate-700">Sex</th>
+            <th class="p-4 font-semibold text-slate-700">Breed</th>
+            <th class="p-4 font-semibold text-slate-700">Primary Color</th>
+            <th class="p-4 font-semibold text-slate-700">Location</th>
+            <!-- <th class="p-4 font-semibold text-slate-700">ID</th> -->
             <th class="p-4 font-semibold text-slate-700">First Seen</th>
             <th class="p-4 font-semibold text-slate-700">Last Seen</th>
             <th class="p-4 font-semibold text-slate-700">Last Updated</th>
@@ -17,20 +23,58 @@
         {% for cat in cats %}
         <tr class="hover:bg-slate-50 transition">
             <td class="p-4 flex items-center gap-3 hover-container">
-               <!--  <img src="{{ cat.image_url }}" class="w-30 h-30 rounded-full object-cover border border-slate-200 shadow-sm"> -->
-                <img src="{{ cat.image_url }}" class="w-32 h-32 square-full object-cover border border-slate-200 shadow-sm .thumbnaill" alt="Thumbnail">
-                <img src="{{ cat.image_url }}" class="popup-image" alt="Full Size">
+                <!--  <img src="{{ cat.image_url }}" class="w-30 h-30 rounded-full object-cover border border-slate-200 shadow-sm"> -->
+                <img
+                    src="{{ cat.image_url }}"
+                    class="w-32 h-32 square-full object-cover border border-slate-200 shadow-sm .thumbnaill"
+                    alt="Thumbnail"
+                />
+                <img
+                    src="{{ cat.image_url }}"
+                    class="popup-image"
+                    alt="Full Size"
+                />
                 <span class="font-medium text-slate-900">{{ cat.name }}</span>
             </td>
-            <td class="p-4 text-slate-500 font-mono text-sm">{{ cat.get_status_display }}</td>
-            <td class="p-4 text-slate-500 font-mono text-sm">{{ cat.image_cy }}</td>
-            <td class="p-4 text-slate-600 text-sm">{{ cat.first_seen|date:"M d, Y" }}</td>
-            <td class="p-4 text-slate-600 text-sm">{{ cat.last_seen|date:"M d, Y" }}</td>
-            <td class="p-4 text-slate-600 text-sm italic">{{ cat.last_updated|timesince }} ago</td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.get_status_display }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.birthday|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.intake_date|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">{{ cat.sex }}</td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.breed }}
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.primary_color }}
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.location }}
+            </td>
+            <!--
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.image_cy }}
+            </td>
+            -->
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.first_seen|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.last_seen|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm italic">
+                {{ cat.last_updated|timesince }} ago
+            </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5" class="p-8 text-center text-slate-400">No cats found in this category.</td>
+            <td colspan="5" class="p-8 text-center text-slate-400">
+                No cats found in this category.
+            </td>
         </tr>
         {% endfor %}
     </tbody>
