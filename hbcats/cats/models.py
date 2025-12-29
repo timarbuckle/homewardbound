@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class CatStatus(models.TextChoices):
@@ -7,10 +8,17 @@ class CatStatus(models.TextChoices):
     PENDING = "pending", "Pending"
     NEW = "new", "New"
 
+
 # Create your models here.
 class Cat(models.Model):
     image_cy = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=100)
+    sex = models.CharField(max_length=10, default="Unknown")
+    birthday = models.DateField(null=True, blank=True, default=timezone.now)
+    breed = models.CharField(max_length=25, default="Unknown")
+    primary_color = models.CharField(max_length=25, default="Unknown")
+    intake_date = models.DateField(null=True, blank=True, default=timezone.now)
+    location = models.CharField(max_length=25, default="Unknown")
     image_url = models.URLField()
     first_seen = models.DateTimeField()
     last_seen = models.DateTimeField()

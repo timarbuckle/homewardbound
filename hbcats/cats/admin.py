@@ -1,17 +1,19 @@
 # from tabnanny import verbose
 # from typing_extensions import ReadOnly
-from cats.updatecats import UpdateCats
-from django.contrib import admin
-from django.utils.html import format_html
-from django.utils import timezone
-from django.contrib import messages
-from django.urls import path
-from django.shortcuts import redirect
-# from django.db.models import Count
+# from datetime import datetime
+from datetime import time, timedelta
 
+from django.contrib import admin, messages
+from django.shortcuts import redirect
+from django.urls import path
+from django.utils import timezone
+from django.utils.html import format_html
+
+from cats.updatecats import UpdateCats
+
+# from django.db.models import Count
 # Register your models here.
-from .models import Cat, UpdateLog, CatStatus
-from datetime import date, time, datetime, timedelta
+from .models import Cat, CatStatus, UpdateLog
 
 
 class RecentCatsFilter(admin.SimpleListFilter):
@@ -31,14 +33,13 @@ class RecentCatsFilter(admin.SimpleListFilter):
         start_datetime = timezone.make_aware(
             timezone.datetime.combine(yesterday, time.min)
         )
-        #end_datetime = timezone.make_aware(timezone.datetime.combine(today, time.min))
+        # end_datetime = timezone.make_aware(timezone.datetime.combine(today, time.min))
         if self.value() == "0days":
-            #return queryset.filter(first_seen__gte=today)
+            # return queryset.filter(first_seen__gte=today)
             return queryset.filter(status=CatStatus.NEW)
         if self.value() == "1days":
             return queryset.filter(
-                status=CatStatus.ADOPTED,
-                last_updated__gte=start_datetime
+                status=CatStatus.ADOPTED, last_updated__gte=start_datetime
             )
             # return queryset.filter(
             #    last_seen__lte=datetime.combine(datetime.today(), time.min)
@@ -56,7 +57,14 @@ class CatAdmin(admin.ModelAdmin):
     list_display = (
         "image_cy",
         "pretty_name",
+        "status",
         "large_photo_preview",
+        "breed",
+        "location",
+        "sex",
+        "primary_color",
+        "birthday",
+        "intake_date",
         "first_seen",
         "last_seen",
     )

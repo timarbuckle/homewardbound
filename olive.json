@@ -1,0 +1,114 @@
+{
+  "nid": 211695213,
+  "name": "Olive ",
+  "uniqueId": "HBCA-A-83583",
+  "sex": "Female",
+  "location": "Cat Room 4",
+  "weight": "",
+  "weight_units": "",
+  "weight_group": null,
+  "birthday": "1471503600",
+  "age_group": {
+    "id": 34249,
+    "shelter_id": 5575,
+    "name": "Adult",
+    "legacy_id": 345350,
+    "age_from": 1,
+    "from_unit": "years",
+    "age_to": 10,
+    "to_unit": "years",
+    "type": "Cat",
+    "default_group": 0,
+    "created_at": "2024-08-05T22:54:05.000000Z",
+    "updated_at": "2024-08-05T22:54:37.000000Z",
+    "deleted_at": null,
+    "estimated_days": 365,
+    "age_from_in_days": 365,
+    "age_to_in_days": 3650,
+    "name_with_duration": "Adult (1-10 years)",
+    "duration": "(1-10 years)"
+  },
+  "species": "Cat",
+  "breed": "Domestic Shorthair",
+  "secondary_breed": "",
+  "primary_color": "Grey",
+  "secondary_color": null,
+  "attributes": [
+    "Adult-Only Home Preferred",
+    "Lap Cat",
+    "Needs Cat Savvy Adopter",
+    "Introvert",
+    "Talkative"
+  ],
+  "photos": [
+    {
+      "id": 30719851,
+      "name": "Olive.jpg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/c29e37c790edbdabea9a36aa001552a3/76e2dacc0bd88b6ffd393b52e493ab87.jpg",
+      "isCover": false,
+      "order_column": 207
+    },
+    {
+      "id": 32142156,
+      "name": "IMG_2361.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/e72b0bf6d622b9157f966ddc4b6bda35/1f32e42279ee7fed31c386bbacbf6223.jpeg",
+      "isCover": false,
+      "order_column": 211
+    },
+    {
+      "id": 32142160,
+      "name": "IMG_2359.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/568275f0e5fefc221596202f477241f6/9a30de8bb4d6b12c8688e37850b4b567.jpeg",
+      "isCover": false,
+      "order_column": 212
+    },
+    {
+      "id": 32142166,
+      "name": "IMG_2358.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/87f123b4bedbfdfb6d8606f98e7cffa7/43cd386d6b0276798aca1d2c887f1876.jpeg",
+      "isCover": false,
+      "order_column": 213
+    },
+    {
+      "id": 32142167,
+      "name": "IMG_2360.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/0019e24651884033f0f4838f29dc170b/8d4cb1f5d3e2645120159a83edfba588.jpeg",
+      "isCover": false,
+      "order_column": 214
+    },
+    {
+      "id": 33265348,
+      "name": "6770206325713590229.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/716c1e2e34cb2260b401fae2d672fbff/2f79643831c611725760e133d5005d52.jpeg",
+      "isCover": false,
+      "order_column": 215
+    },
+    {
+      "id": 33967076,
+      "name": "IMG_6329.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/a7404b7c241751db6610ec6138b65b71/3a72261d0faf9b8c2bb797f725a2ace3.jpeg",
+      "isCover": true,
+      "order_column": 216
+    },
+    {
+      "id": 33967079,
+      "name": "IMG_6318.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/c1fd16c1a103d0a50313b048f72f7396/5fca88d57e073b7afe2c77993ee1c3dd.jpeg",
+      "isCover": false,
+      "order_column": 217
+    },
+    {
+      "id": 33967081,
+      "name": "IMG_6317.jpeg",
+      "url": "https://new-s3.shelterluv.com/profile-pictures/3dd3b78f89de97a18590d41ab5fdcb5b/80767713103a5a96c51cfde92511fcc8.jpeg",
+      "isCover": false,
+      "order_column": 218
+    }
+  ],
+  "intake_date": "1755550759",
+  "public_url": "https://www.shelterluv.com/embed/animal/HBCA-A-83583",
+  "videos": [],
+  "adoptable": 1,
+  "kennel_description": "\ud83e\uded2 Meet Olive! \ud83d\udc9a<br />\nAt 9 years young, this gentle, wise lady is searching for her perfect loving home. Olive has the kind of calm, soothing presence that instantly makes a space feel cozier. She\u2019s all about:<br />\n\u2600\ufe0f Sunny window naps<br />\n\ud83d\udca4 Curling into warm laps<br />\n\ud83d\udc97 Quiet snuggles and sweet head boops<br />\n<br />\nDon\u2019t let her age fool you \u2014 Olive still gets playful when the mood strikes, and she has so much love left to give. This girl is the definition of a loyal, peaceful best friend. \ud83e\udd70<br />\n<br />\nCome meet Olive and see how fast she\u2019ll melt your heart. She\u2019s ready to love her new person with her whole, adorable soul\u2026<br />\n\ud83d\udc9a Could that be you?",
+  "adoptionFee": "$100.00"
+}
