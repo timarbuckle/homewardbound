@@ -1,6 +1,3 @@
-# from tabnanny import verbose
-# from typing_extensions import ReadOnly
-# from datetime import datetime
 from datetime import time, timedelta
 
 from django.contrib import admin, messages
@@ -11,8 +8,6 @@ from django.utils.html import format_html
 
 from cats.updatecats import UpdateCats
 
-# from django.db.models import Count
-# Register your models here.
 from .models import Cat, CatStatus, UpdateLog
 
 
@@ -27,7 +22,6 @@ class RecentCatsFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
-        # today = date.today()
         today = timezone.localdate()
         yesterday = today - timedelta(days=1)
         start_datetime = timezone.make_aware(
@@ -41,9 +35,6 @@ class RecentCatsFilter(admin.SimpleListFilter):
             return queryset.filter(
                 status=CatStatus.ADOPTED, last_updated__gte=start_datetime
             )
-            # return queryset.filter(
-            #    last_seen__lte=datetime.combine(datetime.today(), time.min)
-            # )
 
 
 class CatAdmin(admin.ModelAdmin):
@@ -57,8 +48,8 @@ class CatAdmin(admin.ModelAdmin):
     list_display = (
         "image_cy",
         "pretty_name",
-        "status",
         "large_photo_preview",
+        "status",
         "breed",
         "location",
         "sex",
@@ -69,10 +60,11 @@ class CatAdmin(admin.ModelAdmin):
         "last_seen",
     )
     search_fields = ("name", "image_cy", "first_seen", "last_seen")
-    list_filter = (RecentCatsFilter, "name", "last_seen")
+    list_filter = (RecentCatsFilter, "last_seen", "name")
     # readonly_fields = ("image_cy", "name", "image_url", "first_seen", "last_seen")
 
     # Define the custom method to display the image
+    @admin.display(description="Photo")
     def photo_preview(self, obj):
         # Check if the object has a photo file associated with it
         if obj.image_url:
@@ -86,6 +78,7 @@ class CatAdmin(admin.ModelAdmin):
         return "No Image"  # Return a string if no photo exists
 
     # Define the custom method for the large image display
+    @admin.display(description="Photo")
     def large_photo_preview(self, obj):
         if obj.image_url:
             # Set larger dimensions (e.g., 200x200 or more)
@@ -95,40 +88,19 @@ class CatAdmin(admin.ModelAdmin):
             )
         return "No Image Uploaded"
 
-    # Optional: Set a user-friendly column header
-    photo_preview.short_description = "Photo"
-    large_photo_preview.short_description = "Photo"
-
-    # Optional: Allow the column header to be sorted by the photo field
-    photo_preview.admin_order_field = "photo"
-    large_photo_preview.admin_order_field = "photo"
-
+    @admin.display(description="Name")
     def pretty_name(self, obj):
         name = obj.name
 
-        # Determine the color based on the price (optional enhancement)
-        # Use format_html to securely inject the HTML and CSS
-        # style="font-size: 1.2em; font-weight: bold; color: green;"
         return format_html(
             '<span style="font-size: 1.8em; font-weight: normal; color: {};">{}</span>',
             "black",
             name,
         )
 
-    # Set a user-friendly column header
-    pretty_name.short_description = "Price"
-
-    # Allow sorting on the actual database field
-    pretty_name.admin_order_field = "price"
-
+    @admin.display(description="Total Cats", ordering="cats")
     def total_cats(self, obj):
         return obj.cats.count()
-
-    # Set a user-friendly column header
-    total_cats.short_description = "Total Cats"
-
-    # Allow sorting on the actual database field
-    total_cats.admin_order_field = "cats"
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context)
