@@ -29,6 +29,19 @@ class Cat(models.Model):
         default=CatStatus.AVAILABLE,
     )
 
+    @property
+    def age(self):
+        if not self.birthday:
+            return "Unknown"
+        
+        today = timezone.now().date()
+        diff = today - self.birthday
+        years = diff.days // 365
+        months = (diff.days % 365) // 30
+        if years < 1:
+            return f"{months}mo"
+        return f"{years}y{months}mo"
+
 
 class UpdateLog(models.Model):
     last_updated = models.DateTimeField()

@@ -7,7 +7,7 @@
         <tr>
             <th class="p-4 font-semibold text-slate-700">Cat</th>
             <th class="p-4 font-semibold text-slate-700">Status</th>
-            <th class="p-4 font-semibold text-slate-700">Birthday</th>
+            <th class="p-4 font-semibold text-slate-700">Age</th>
             <th class="p-4 font-semibold text-slate-700">Intake Date</th>
             <th class="p-4 font-semibold text-slate-700">Sex</th>
             <th class="p-4 font-semibold text-slate-700">Breed</th>
@@ -33,7 +33,7 @@
                 {{ cat.get_status_display }}
             </td>
             <td class="p-4 text-slate-600 text-sm">
-                {{ cat.birthday|date:"M d, Y" }}
+                {{ cat.age }}
             </td>
             <td class="p-4 text-slate-600 text-sm">
                 {{ cat.intake_date|date:"M d, Y" }}
