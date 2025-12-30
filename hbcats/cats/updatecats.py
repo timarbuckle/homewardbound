@@ -216,3 +216,4 @@ class UpdateCats:
             cat.primary_color = cat_details.get("primary_color", "")
             cat.save()
             logger.info(f"Updated details for cat {cat.name}")
+        return
