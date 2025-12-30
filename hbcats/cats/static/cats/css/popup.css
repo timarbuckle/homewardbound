@@ -19,3 +19,21 @@ max-width: 500px;
 max-height: 90vh;
 pointer-events: none;
 }
+
+.image-popup {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  max-width: 500px; /* Adjusted to match original size */
+  max-height: 500px; /* Adjusted to match original size */
+  overflow: hidden;
+}
+
+.image-popup img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

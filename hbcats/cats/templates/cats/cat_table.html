@@ -13,7 +13,6 @@
             <th class="p-4 font-semibold text-slate-700">Breed</th>
             <th class="p-4 font-semibold text-slate-700">Primary Color</th>
             <th class="p-4 font-semibold text-slate-700">Location</th>
-            <!-- <th class="p-4 font-semibold text-slate-700">ID</th> -->
             <th class="p-4 font-semibold text-slate-700">First Seen</th>
             <th class="p-4 font-semibold text-slate-700">Last Seen</th>
             <th class="p-4 font-semibold text-slate-700">Last Updated</th>
@@ -21,18 +20,12 @@
     </thead>
     <tbody class="divide-y divide-slate-100">
         {% for cat in cats %}
-        <tr class="hover:bg-slate-50 transition">
-            <td class="p-4 flex items-center gap-3 hover-container">
-                <!--  <img src="{{ cat.image_url }}" class="w-30 h-30 rounded-full object-cover border border-slate-200 shadow-sm"> -->
+        <tr class="hover:bg-slate-50 transition hover-container" data-image-url="{{ cat.image_url }}">
+            <td class="p-4 flex items-center gap-3">
                 <img
                     src="{{ cat.image_url }}"
-                    class="w-32 h-32 square-full object-cover border border-slate-200 shadow-sm .thumbnaill"
+                    class="w-32 h-32 square-full object-cover border border-slate-200 shadow-sm thumbnail"
                     alt="Thumbnail"
-                />
-                <img
-                    src="{{ cat.image_url }}"
-                    class="popup-image"
-                    alt="Full Size"
                 />
                 <span class="font-medium text-slate-900">{{ cat.name }}</span>
             </td>
@@ -55,11 +48,6 @@
             <td class="p-4 text-slate-500 font-mono text-sm">
                 {{ cat.location }}
             </td>
-            <!--
-            <td class="p-4 text-slate-500 font-mono text-sm">
-                {{ cat.image_cy }}
-            </td>
-            -->
             <td class="p-4 text-slate-600 text-sm">
                 {{ cat.first_seen|date:"M d, Y" }}
             </td>
@@ -72,7 +60,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5" class="p-8 text-center text-slate-400">
+            <td colspan="11" class="p-8 text-center text-slate-400">
                 No cats found in this category.
             </td>
         </tr>
