@@ -93,7 +93,7 @@ class CatAdmin(admin.ModelAdmin):
         name = obj.name
 
         return format_html(
-            '<span style="font-size: 1.8em; font-weight: normal; color: {};">{}</span>',
+            "<span style=\"font-family: 'ui-monospace', 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; font-weight: bold; font-size: 1.1em; color: {};\">{}</span>",
             "black",
             name,
         )

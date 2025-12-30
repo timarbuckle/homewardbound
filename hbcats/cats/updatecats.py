@@ -113,9 +113,6 @@ class UpdateCats:
 
                 cat_details_url = self.get_animal_info_url(image_cy)
                 cat_details = self.get_animal_details(cat_details_url)
-                if len(cat_details) == 0:
-                    logger.error(f"Failed to fetch details for cat {name}")
-                    continue
 
                 cat_birthday_raw = cat_details.get("birthday") or "0"
                 cat_birthday = timezone.make_aware(
@@ -192,8 +189,8 @@ class UpdateCats:
         cats = Cat.objects.all()
         for cat in cats:
             # Skip cats with known sex, already pulled the data
-            if cat.sex != "Unknown":
-                continue
+            # if cat.sex != "Unknown":
+            #    continue
 
             cat_details_url = self.get_animal_info_url(cat.image_cy)
             logger.info(f"Requesting details for cat {cat.name}")
