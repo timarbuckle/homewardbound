@@ -62,21 +62,21 @@
         class="flex bg-white p-2 rounded-xl shadow-sm mb-6 w-fit border border-slate-200"
     >
         <button
-            hx-get="{% url 'cat_list' %}?filter=all"
+            hx-get="{% url 'cat_list' %}?filter=all&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
             hx-target="#cat-table"
             class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700"
         >
             All Cats
         </button>
         <button
-            hx-get="{% url 'cat_list' %}?filter=new"
+            hx-get="{% url 'cat_list' %}?filter=new&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
             hx-target="#cat-table"
             class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700"
         >
             New Arrivals
         </button>
         <button
-            hx-get="{% url 'cat_list' %}?filter=adopted"
+            hx-get="{% url 'cat_list' %}?filter=adopted&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
             hx-target="#cat-table"
             class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700"
         >
@@ -96,7 +96,7 @@
         // Trigger an HTMX request to load all cats on page load
         const catTable = document.querySelector("#cat-table");
         if (catTable) {
-            htmx.ajax("GET", "{% url 'cat_list' %}?filter=all", "#cat-table");
+            htmx.ajax("GET", "{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc", "#cat-table");
         }
     });
 </script>

@@ -2,20 +2,66 @@
 <link rel="stylesheet" href="{% static 'cats/css/popup.css' %}" />
 <script src="{% static 'cats/js/popup.js' %}"></script>
 
-<table class="w-full text-left border-collapse">
+<table class="w-full text-left border-collapse" id="cat-table">
     <thead class="bg-slate-50 border-b border-slate-200">
         <tr>
-            <th class="p-4 font-semibold text-slate-700">Cat</th>
-            <th class="p-4 font-semibold text-slate-700">Status</th>
-            <th class="p-4 font-semibold text-slate-700">Age</th>
-            <th class="p-4 font-semibold text-slate-700">Intake Date</th>
-            <th class="p-4 font-semibold text-slate-700">Sex</th>
-            <th class="p-4 font-semibold text-slate-700">Breed</th>
-            <th class="p-4 font-semibold text-slate-700">Primary Color</th>
-            <th class="p-4 font-semibold text-slate-700">Location</th>
-            <th class="p-4 font-semibold text-slate-700">First Seen</th>
-            <th class="p-4 font-semibold text-slate-700">Last Seen</th>
-            <th class="p-4 font-semibold text-slate-700">Last Updated</th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=name&sort_order={% if current_sort == 'name' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Cat
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=status&sort_order={% if current_sort == 'status' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Status
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=age&sort_order={% if current_sort == 'age' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Age
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=intake_date&sort_order={% if current_sort == 'intake_date' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Intake Date
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=sex&sort_order={% if current_sort == 'sex' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Sex
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=breed&sort_order={% if current_sort == 'breed' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Breed
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=primary_color&sort_order={% if current_sort == 'primary_color' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Primary Color
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=location&sort_order={% if current_sort == 'location' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Location
+                </a>
+            </th>
+            <!--
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=first_seen&sort_order={% if current_sort == 'first_seen' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    First Seen
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=last_seen&sort_order={% if current_sort == 'last_seen' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Last Seen
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a hx-get="?filter={{ current_filter }}&sort=last_updated&sort_order={% if current_sort == 'last_updated' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}" hx-target="#cat-table" hx-swap="innerHTML">
+                    Last Updated
+                </a>
+            </th>
+            -->
         </tr>
     </thead>
     <tbody id="cat-table-body" class="divide-y divide-slate-100">
@@ -48,6 +94,7 @@
             <td class="p-4 text-slate-500 font-mono text-sm">
                 {{ cat.location }}
             </td>
+            <!--
             <td class="p-4 text-slate-600 text-sm">
                 {{ cat.first_seen|date:"M d, Y" }}
             </td>
@@ -57,6 +104,7 @@
             <td class="p-4 text-slate-600 text-sm italic">
                 {{ cat.last_updated|timesince }} ago
             </td>
+            -->
         </tr>
         {% empty %}
         <tr>

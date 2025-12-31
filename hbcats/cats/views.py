@@ -11,21 +11,53 @@ from .models import Cat, CatStatus
 # Create your views here.
 def cat_list_view(request):
     filter_type = request.GET.get("filter", "all")
-    cats = Cat.objects.none()
+    sort = request.GET.get("sort", "name")  # Default sorting by name
+    sort_order = request.GET.get("sort_order", "asc")  # Default to ascending order
 
-    if request.headers.get("HX-Request"):
-        if filter_type == "new":
-            cats = Cat.objects.filter(status=CatStatus.NEW)
-        elif filter_type == "adopted":
-            time_threshold = timezone.now() - timedelta(hours=24)
-            cats = Cat.objects.filter(status=CatStatus.ADOPTED, last_seen__gte=time_threshold)
+    valid_sort_fields = [
+        "name", "status", "age", "intake_date", "sex", "breed",
+        "primary_color", "location"]
+    #print(f"sort: {sort}, sort_order: {sort_order}")
+
+    # Ensure the sort field is valid
+    if sort not in valid_sort_fields:
+        sort = "name"
+
+    # Handle age sorting explicitly
+    sort_field = sort
+    if sort == "age":
+        if sort_order == "desc":
+            sort_field = "-birthday"  # Oldest first for descending age
         else:
-            cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+            sort_field = "birthday"  # Youngest first for ascending age
+    else:
+        # Determine the sorting direction for other fields
+        if sort_order == "desc":
+            sort_field = f"-{sort}"
 
-        context = {"cats": cats}
+    # Filter the cats based on the filter_type
+    if filter_type == "new":
+        cats = Cat.objects.filter(status=CatStatus.NEW)
+    elif filter_type == "adopted":
+        time_threshold = timezone.now() - timedelta(hours=24)
+        cats = Cat.objects.filter(status=CatStatus.ADOPTED, last_seen__gte=time_threshold)
+    else:
+        cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+
+    # Apply sorting
+    cats = cats.order_by(sort_field)
+
+    context = {
+        "cats": cats,
+        "current_filter": filter_type,
+        "current_sort": sort,
+        "current_sort_order": "desc" if sort_field.startswith("-") else "asc",  # Toggle sort order
+    }
+
+    # Render the appropriate template
+    if request.headers.get("HX-Request"):
         return render(request, "cats/cat_table.html", context)
 
-    context = {"cats": cats}
     return render(request, "cats/dashboard.html", context)
 
 
