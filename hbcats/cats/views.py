@@ -1,30 +1,31 @@
 from datetime import time, timedelta
 
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from .models import Cat
+from .models import Cat, CatStatus
 
 
 # Create your views here.
 def cat_list_view(request):
     filter_type = request.GET.get("filter", "all")
-
-    if filter_type == "new":
-        cats = Cat.objects.filter(status="new")
-    elif filter_type == "adopted":
-        time_threshold = timezone.now() - timedelta(hours=24)
-        cats = Cat.objects.filter(status="adopted", last_seen__gte=time_threshold)
-    else:
-        # cats = Cat.objects.all()
-        cats = Cat.objects.filter(status="available")
-
-    context = {"cats": cats}
+    cats = Cat.objects.none()
 
     if request.headers.get("HX-Request"):
+        if filter_type == "new":
+            cats = Cat.objects.filter(status=CatStatus.NEW)
+        elif filter_type == "adopted":
+            time_threshold = timezone.now() - timedelta(hours=24)
+            cats = Cat.objects.filter(status=CatStatus.ADOPTED, last_seen__gte=time_threshold)
+        else:
+            cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+
+        context = {"cats": cats}
         return render(request, "cats/cat_table.html", context)
 
+    context = {"cats": cats}
     return render(request, "cats/dashboard.html", context)
 
 

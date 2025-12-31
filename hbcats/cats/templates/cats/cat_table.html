@@ -18,16 +18,16 @@
             <th class="p-4 font-semibold text-slate-700">Last Updated</th>
         </tr>
     </thead>
-    <tbody class="divide-y divide-slate-100">
+    <tbody id="cat-table-body" class="divide-y divide-slate-100">
         {% for cat in cats %}
         <tr class="hover:bg-slate-50 transition hover-container" data-image-url="{{ cat.image_url }}">
-            <td class="p-4 flex items-center gap-3">
+            <td class="p-4 flex flex-col items-center gap-2">
+                <span class="font-medium text-slate-900">{{ cat.name }}</span>
                 <img
                     src="{{ cat.image_url }}"
                     class="w-32 h-32 square-full object-cover border border-slate-200 shadow-sm thumbnail"
                     alt="Thumbnail"
                 />
-                <span class="font-medium text-slate-900">{{ cat.name }}</span>
             </td>
             <td class="p-4 text-slate-500 font-mono text-sm">
                 {{ cat.get_status_display }}
