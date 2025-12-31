@@ -22,10 +22,10 @@
         {% for cat in cats %}
         <tr class="hover:bg-slate-50 transition hover-container" data-image-url="{{ cat.image_url }}">
             <td class="p-4 flex flex-col items-center gap-2">
-                <span class="font-medium text-slate-900">{{ cat.name }}</span>
+                <span class="font-bold text-lg text-slate-900 text-center">{{ cat.name }}</span>
                 <img
                     src="{{ cat.image_url }}"
-                    class="w-32 h-32 square-full object-cover border border-slate-200 shadow-sm thumbnail"
+                    class="w-48 h-48 square-full object-cover border border-slate-200 shadow-sm thumbnail"
                     alt="Thumbnail"
                 />
             </td>
