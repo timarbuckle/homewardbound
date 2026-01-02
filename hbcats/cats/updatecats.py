@@ -29,6 +29,7 @@ class UpdateCats:
         self.driver = None
 
     def update_cats(self):
+        logger.info("Updating cats...")
         # reset status of all NEW cats to AVAILABLE
         Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
 
@@ -47,7 +48,7 @@ class UpdateCats:
             driver = webdriver.Chrome(service=service, options=options)
         else:
             driver = webdriver.Chrome()
-        # options.add_argument("--headless")  # Run without a GUI
+        options.add_argument("--headless")  # Run without a GUI
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
