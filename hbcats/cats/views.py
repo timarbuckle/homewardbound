@@ -1,4 +1,5 @@
 from datetime import time, timedelta
+import logging
 
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -8,8 +9,12 @@ from django.views.decorators.http import require_POST
 from .models import Cat, CatStatus
 
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 # Create your views here.
 def cat_list_view(request):
+    logger.info("cat_list_view called")
     filter_type = request.GET.get("filter", "all")
     sort = request.GET.get("sort", "name")  # Default sorting by name
     sort_order = request.GET.get("sort_order", "asc")  # Default to ascending order
@@ -17,7 +22,7 @@ def cat_list_view(request):
     valid_sort_fields = [
         "name", "status", "age", "intake_date", "sex", "breed",
         "primary_color", "location"]
-    #print(f"sort: {sort}, sort_order: {sort_order}")
+    logger.info(f"sort: {sort}, sort_order: {sort_order}")
 
     # Ensure the sort field is valid
     if sort not in valid_sort_fields:
@@ -37,11 +42,15 @@ def cat_list_view(request):
 
     # Filter the cats based on the filter_type
     if filter_type == "new":
+        logger.info("Filtering new cats")
         cats = Cat.objects.filter(status=CatStatus.NEW)
     elif filter_type == "adopted":
+        logger.info("Filtering adopted cats seen in last 24 hours")
         time_threshold = timezone.now() - timedelta(hours=24)
-        cats = Cat.objects.filter(status=CatStatus.ADOPTED, last_seen__gte=time_threshold)
+        #cats = Cat.objects.filter(status=CatStatus.ADOPTED, last_seen__gte=time_threshold)
+        cats = Cat.objects.filter(status=CatStatus.ADOPTED)
     else:
+        logger.info("Filtering available cats")
         cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
 
     # Apply sorting

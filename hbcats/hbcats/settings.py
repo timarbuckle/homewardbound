@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-0=98+^cir)1p_hq7^$&v-q8*ygi7mlbx3#)=$=_&qxhn9di*r8"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 #ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 ALLOWED_HOSTS = ["*"]
@@ -131,20 +131,16 @@ LOGGING = {
     "version": 1,  # the dictConfig format version
     "disable_existing_loggers": False,  # retain the default loggers
     "handlers": {
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": "hbcats.log",
-            "formatter": "verbose",
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
         },
     },
-    "formatters": {
-        "verbose": {
-            "format": "{name} {levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
+    "loggers" : {
+        "": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
         },
     },
 }
