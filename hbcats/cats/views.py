@@ -96,7 +96,15 @@ def update_all_cats_view(request):
     updater = UpdateCats()
     updater.update_all_cat_details()
 
-    return render(request, "cats")
+    cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+
+    context = {
+        "cats": cats.order_by("name"),
+        "current_filter": "all",
+        "current_sort": "name",
+        "current_sort_order": "asc"
+    }
+    return render(request, "cats/cat_table.html", {"cats": Cat.objects.all()})
 
 
 @require_POST
