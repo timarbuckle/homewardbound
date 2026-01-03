@@ -24,6 +24,7 @@ logger.setLevel(logging.DEBUG)
 class UpdateCats:
     ALL_CATS_URL = "https://www.shelterluv.com/embed/5575"
     CAT_DETAILS_URL = "https://www.shelterluv.com/embed/animal/"
+    #"https://www.homewardboundcats.org/adopt/"
 
     def __init__(self):
         self.driver = None
@@ -38,27 +39,25 @@ class UpdateCats:
         # options = wedriver.get_default_chrome_options()
 
         options = Options()
+        options.add_argument("--headless")  # Run without a GUI
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
         if platform.system() == "Darwin":
             # options.binary_location = "/usr/local/bin/chromedriver"
             # options.binary_location = "/opt/homebrew/bin/chromium"
-            driver = webdriver.Safari()
+            driver = webdriver.Safari(options=options)
         elif platform.system() == "Linux":
             options.binary_location = "/usr/bin/chromium-browser"
             service = Service(executable_path="/usr/bin/chromedriver")
             driver = webdriver.Chrome(service=service, options=options)
         else:
-            driver = webdriver.Chrome()
-        options.add_argument("--headless")  # Run without a GUI
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
+            driver = webdriver.Chrome(options=options)
 
         driver.implicitly_wait(0.5)
-        # driver.get("https://www.homewardboundcats.org/adopt/")
         driver.get(self.ALL_CATS_URL)
 
-        # scroll down to load dynamic content
 
-        # Get initial scroll height
+        # get initial scroll height
         last_height = driver.execute_script("return document.body.scrollHeight")
         scroll_pause_time = 2  # Pause time to let the dynamic content load
 
