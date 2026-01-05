@@ -1,5 +1,5 @@
-from datetime import time, timedelta
 import logging
+from datetime import time, timedelta
 
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -8,9 +8,9 @@ from django.views.decorators.http import require_POST
 
 from .models import Cat, CatStatus
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 
 # Create your views here.
 def cat_list_view(request):
@@ -19,9 +19,16 @@ def cat_list_view(request):
     sort_order = request.GET.get("sort_order", "asc")  # Default to ascending order
 
     valid_sort_fields = [
-        "name", "status", "age", "intake_date", "sex", "breed",
-        "primary_color", "location"]
-    #logger.info(f"sort: {sort}, sort_order: {sort_order}")
+        "name",
+        "status",
+        "age",
+        "intake_date",
+        "sex",
+        "breed",
+        "primary_color",
+        "location",
+    ]
+    # logger.info(f"sort: {sort}, sort_order: {sort_order}")
 
     # Ensure the sort field is valid
     if sort not in valid_sort_fields:
@@ -41,24 +48,33 @@ def cat_list_view(request):
 
     # Filter the cats based on the filter_type
     if filter_type == "new":
-        #logger.debug("Filtering new cats")
+        # logger.debug("Filtering new cats")
         time_threshold = timezone.now() - timedelta(hours=24)
-        #cats = Cat.objects.filter(status=CatStatus.NEW)
-        cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW), first_seen__gte=time_threshold)
+        # cats = Cat.objects.filter(status=CatStatus.NEW)
+        cats = Cat.objects.filter(
+            Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW),
+            first_seen__gte=time_threshold,
+        )
     elif filter_type == "adopted":
-        #logger.debug("Filtering adopted cats seen in last 24 hours")
+        # logger.debug("Filtering adopted cats seen in last 24 hours")
         time_threshold = timezone.now() - timedelta(hours=24)
-        cats = Cat.objects.filter(status=CatStatus.ADOPTED, last_seen__gte=time_threshold)
-        #cats = Cat.objects.filter(status=CatStatus.ADOPTED)
+        cats = Cat.objects.filter(
+            status=CatStatus.ADOPTED, last_seen__gte=time_threshold
+        )
+        # cats = Cat.objects.filter(status=CatStatus.ADOPTED)
     else:
-        #logger.debug("Filtering available cats")
-        cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+        # logger.debug("Filtering available cats")
+        cats = Cat.objects.filter(
+            Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW)
+        )
 
     context = {
         "cats": cats.order_by(sort_field),
         "current_filter": filter_type,
         "current_sort": sort,
-        "current_sort_order": "desc" if sort_field.startswith("-") else "asc",  # Toggle sort order
+        "current_sort_order": "desc"
+        if sort_field.startswith("-")
+        else "asc",  # Toggle sort order
     }
 
     # Render the appropriate template
@@ -102,7 +118,7 @@ def update_all_cats_view(request):
         "cats": cats.order_by("name"),
         "current_filter": "all",
         "current_sort": "name",
-        "current_sort_order": "asc"
+        "current_sort_order": "asc",
     }
     return render(request, "cats/cat_table.html", {"cats": Cat.objects.all()})
 
@@ -126,3 +142,16 @@ def update_stats_view(request):
         ).count(),
     }
     return render(request, "cats/stats_bar.html", context)
+
+
+def report_view(request):
+    from .models import Cat  # , CatStatus
+
+    cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+    context = {
+        "cats": cats.order_by("birthday"),
+        # "total_cats": Cat.objects.filter(status__in=[CatStatus.AVAILABLE, CatStatus.NEW]).count(),
+        # "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
+        # "adopted_cats": Cat.objects.filter(status=CatStatus.ADOPTED).count(),
+    }
+    return render(request, "cats/report.html", context)

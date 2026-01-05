@@ -1,5 +1,4 @@
-{% extends 'cats/base.html' %}
-{% block content %}
+{% extends 'cats/base.html' %} {% block content %}
 <div class="max-w-6xl mx-auto p-6">
     <div
         class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
@@ -51,6 +50,19 @@
                 >
                 Update CurrentCats
             </button>
+            <button
+                hx-get="{% url 'report' %}"
+                hx-target="#report-table"
+                hx-indicator="#update-spinner"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition flex items-center"
+            >
+                <span
+                    id="update-spinner"
+                    class="htmx-indicator animate-spin mr-2"
+                    >↻</span
+                >
+                Generate Report
+            </button>
         </div>
     </div>
 
@@ -96,7 +108,11 @@
         // Trigger an HTMX request to load all cats on page load
         const catTable = document.querySelector("#cat-table");
         if (catTable) {
-            htmx.ajax("GET", "{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc", "#cat-table");
+            htmx.ajax(
+                "GET",
+                "{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc",
+                "#cat-table",
+            );
         }
     });
 </script>

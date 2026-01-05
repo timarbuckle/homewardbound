@@ -1,0 +1,108 @@
+{% extends 'cats/base.html' %} {% load static %}
+<link rel="stylesheet" href="{% static 'cats/css/report.css' %}" />
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-4">Cat Report</h1>
+
+<table class="w-full text-left border-collapse" id="report-table">
+    <thead class="bg-slate-50 border-b border-slate-200">
+        <tr>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Cat </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Status </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Age </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Intake Date </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Sex </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Breed </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Primary Color </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a> Location </a>
+            </th>
+            <!--
+            <th class="p-4 font-semibold text-slate-700">
+                <a>
+                    First Seen
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a>
+                    Last Seen
+                </a>
+            </th>
+            <th class="p-4 font-semibold text-slate-700">
+                <a>
+                    Last Updated
+                </a>
+            </th>
+            -->
+        </tr>
+    </thead>
+    <tbody id="report-body" class="divide-y divide-slate-100">
+        {% for cat in cats %}
+        <tr
+            class="hover:bg-slate-50 transition hover-container"
+            data-image-url="{{ cat.image_url }}"
+        >
+            <td class="p-4 flex flex-col items-center gap-2">
+                <span class="font-bold text-lg text-slate-900 text-center"
+                    >{{ cat.name }}</span
+                >
+                <img
+                    src="{{ cat.image_url }}"
+                    class="w-48 h-48 square-full object-cover border border-slate-200 shadow-sm thumbnail"
+                    alt="Thumbnail"
+                />
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.get_status_display }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm">{{ cat.age }}</td>
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.intake_date|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">{{ cat.sex }}</td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.breed }}
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.primary_color }}
+            </td>
+            <td class="p-4 text-slate-500 font-mono text-sm">
+                {{ cat.location }}
+            </td>
+            <!--
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.first_seen|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm">
+                {{ cat.last_seen|date:"M d, Y" }}
+            </td>
+            <td class="p-4 text-slate-600 text-sm italic">
+                {{ cat.last_updated|timesince }} ago
+            </td>
+            -->
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="11" class="p-8 text-center text-slate-400">
+                No cats found in this category.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
