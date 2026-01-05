@@ -6,7 +6,7 @@ TODO:
 [ ] add report
 [x] get working from cats.timarbuckle.com
 [ ] pull images and serve locally
-[ ] fix dashboard totals and filters
+[x] fix dashboard totals and filters
 [ ] fix time zone errors below when doing update
 [ ] add cron job to update on a schedule
 
