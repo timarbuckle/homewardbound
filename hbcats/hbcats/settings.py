@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-0=98+^cir)1p_hq7^$&v-q8*ygi7mlbx3#)=$=_&qxhn9di*r8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 ALLOWED_HOSTS = ["*"]
 
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "cats",
+    "lockdown",
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "lockdown.middleware.LockdownMiddleware",
 ]
 
 ROOT_URLCONF = "hbcats.urls"
@@ -136,7 +138,7 @@ LOGGING = {
             "level": "DEBUG",
         },
     },
-    "loggers" : {
+    "loggers": {
         "": {
             "handlers": ["console"],
             "level": "INFO",
@@ -144,3 +146,5 @@ LOGGING = {
         },
     },
 }
+LOCKDOWN_PASSWORDS = ("kitcat",)
+LOCKDOWN_FORM = "lockdown.forms.LockdownForm"
