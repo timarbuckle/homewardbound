@@ -9,8 +9,9 @@ from bs4 import BeautifulSoup
 from django.db.models import Q
 from django.utils import timezone
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.safari.options import Options as SafariOptions
 
 from cats.models import Cat, CatStatus, UpdateLog
 
@@ -24,7 +25,7 @@ logger.setLevel(logging.DEBUG)
 class UpdateCats:
     ALL_CATS_URL = "https://www.shelterluv.com/embed/5575"
     CAT_DETAILS_URL = "https://www.shelterluv.com/embed/animal/"
-    #"https://www.homewardboundcats.org/adopt/"
+    # "https://www.homewardboundcats.org/adopt/"
 
     def __init__(self):
         self.driver = None
@@ -34,28 +35,32 @@ class UpdateCats:
         # reset status of all NEW cats to AVAILABLE
         Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
 
-        # driver = webdriver.Safari()
-        # driver = webdriver.Chrome()
-        # options = wedriver.get_default_chrome_options()
-
-        options = Options()
-        options.add_argument("--headless")  # Run without a GUI
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
         if platform.system() == "Darwin":
             # options.binary_location = "/usr/local/bin/chromedriver"
             # options.binary_location = "/opt/homebrew/bin/chromium"
+            options = SafariOptions()
+            options.add_argument("--headless")  # Run without a GUI
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
             driver = webdriver.Safari(options=options)
         elif platform.system() == "Linux":
+            # options = wedriver.get_default_chrome_options()
+            options = ChromeOptions()
+            options.add_argument("--headless")  # Run without a GUI
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
             options.binary_location = "/usr/bin/chromium-browser"
             service = Service(executable_path="/usr/bin/chromedriver")
             driver = webdriver.Chrome(service=service, options=options)
         else:
+            options = ChromeOptions()
+            options.add_argument("--headless")  # Run without a GUI
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
             driver = webdriver.Chrome(options=options)
 
         driver.implicitly_wait(0.5)
         driver.get(self.ALL_CATS_URL)
-
 
         # get initial scroll height
         last_height = driver.execute_script("return document.body.scrollHeight")

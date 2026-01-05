@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "cats",
-    "lockdown",
+    "lockdown",  # https://www.gyford.com/phil/writing/2012/01/24/password-django/
 ]
 
 MIDDLEWARE = [

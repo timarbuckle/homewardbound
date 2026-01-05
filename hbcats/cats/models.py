@@ -1,3 +1,6 @@
+from datetime import date
+from typing import cast
+
 from django.db import models
 from django.utils import timezone
 
@@ -9,7 +12,6 @@ class CatStatus(models.TextChoices):
     NEW = "new", "New"
 
 
-# Create your models here.
 class Cat(models.Model):
     image_cy = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=100)
@@ -33,9 +35,9 @@ class Cat(models.Model):
     def age(self):
         if not self.birthday:
             return "Unknown"
-        
+
         today = timezone.now().date()
-        diff = today - self.birthday
+        diff = today - cast(date, self.birthday)
         years = diff.days // 365
         months = (diff.days % 365) // 30
         if years < 1:

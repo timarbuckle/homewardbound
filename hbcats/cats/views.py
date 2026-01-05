@@ -1,8 +1,9 @@
 import logging
 from datetime import time, timedelta
 
+# from imaplib import Commands
 from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -120,7 +121,8 @@ def update_all_cats_view(request):
         "current_sort": "name",
         "current_sort_order": "asc",
     }
-    return render(request, "cats/cat_table.html", {"cats": Cat.objects.all()})
+    # return render(request, "cats/cat_table.html", {"cats": Cat.objects.all()})
+    return render(request, "cats/cat_table.html", context=context)
 
 
 @require_POST
@@ -150,8 +152,5 @@ def report_view(request):
     cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
     context = {
         "cats": cats.order_by("birthday"),
-        # "total_cats": Cat.objects.filter(status__in=[CatStatus.AVAILABLE, CatStatus.NEW]).count(),
-        # "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
-        # "adopted_cats": Cat.objects.filter(status=CatStatus.ADOPTED).count(),
     }
     return render(request, "cats/report.html", context)
