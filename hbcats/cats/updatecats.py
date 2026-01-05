@@ -155,7 +155,7 @@ class UpdateCats:
             cat.save()
 
         logger.info(
-            f"Total cats: {total_cats}. New cats added: {new_cat_count} Adopted cats: {adopted.count()}"
+            f"Total cats: {total_cats} New cats added: {new_cat_count} Adopted cats: {adopted.count()}"
         )
         UpdateLog.objects.create(
             total_cats=total_cats,
