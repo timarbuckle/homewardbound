@@ -1,0 +1,34 @@
+/* report.css */
+
+/* Base styles for the screen */
+#report-table th {
+    padding: 1rem; /* equivalent to p-4 */
+    font-weight: 600; /* equivalent to font-semibold */
+    color: #475569; /* equivalent to text-slate-600 */
+    text-align: left;
+}
+
+/* Print-specific overrides */
+@media print {
+    #report-table th {
+        padding: 0.25rem !important; /* equivalent to print:p-1 */
+        text-align: left !important; /* ensures left alignment */
+        font-size: 10pt; /* smaller font to fit more data */
+        color: #000 !important; /* high contrast for printing */
+    }
+    /* Remove link styling in headers when printing */
+    #report-table th a {
+        text-decoration: none;
+        color: inherit;
+    }
+    #report-table td {
+        padding: 0.25rem !important;  /* print:p-1 */
+        font-size: 0.75rem !important; /* print:text-xs */
+        color: #000 !important;        /* Pure black prints better than slate grey */
+        border-bottom: 1px solid #e2e8f0; /* Ensure thin lines between rows */
+    }
+    /* If you used font-mono in your HTML, override it here to save space */
+    .font-mono {
+        font-family: ui-sans-serif, system-ui, sans-serif !important;
+    }
+}

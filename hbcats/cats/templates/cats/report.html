@@ -2,34 +2,31 @@
 <link rel="stylesheet" href="{% static 'cats/css/report.css' %}" />
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-4">Cat Report</h1>
+<h1 class="text-2xl font-bold mb-4">Available Cats</h1>
 
-<table class="w-full text-left border-collapse" id="report-table">
+<table class="w-full text-left border-collapse" id="report-table" media="all">
     <thead class="bg-slate-50 border-b border-slate-200">
         <tr>
-            <th class="p-4 font-semibold text-slate-700">
+            <th class="column-header">
                 <a> Cat </a>
             </th>
-            <th class="p-4 font-semibold text-slate-700">
-                <a> Status </a>
-            </th>
-            <th class="p-4 font-semibold text-slate-700">
+            <th class="column-header">
                 <a> Age </a>
             </th>
-            <th class="p-4 font-semibold text-slate-700">
-                <a> Intake Date </a>
-            </th>
-            <th class="p-4 font-semibold text-slate-700">
+            <th class="column-header">
                 <a> Sex </a>
             </th>
-            <th class="p-4 font-semibold text-slate-700">
+            <th class="column-header">
+                <a> Location </a>
+            </th>
+            <th class="column-header">
+                <a> Intake Date </a>
+            </th>
+            <th class="column-header">
                 <a> Breed </a>
             </th>
-            <th class="p-4 font-semibold text-slate-700">
+            <th class="column-header">
                 <a> Primary Color </a>
-            </th>
-            <th class="p-4 font-semibold text-slate-700">
-                <a> Location </a>
             </th>
             <!--
             <th class="p-4 font-semibold text-slate-700">
@@ -53,24 +50,19 @@
     <tbody id="report-body" class="divide-y divide-slate-100">
         {% for cat in cats %}
         <tr>
-            <td class="p-4 print:p-1 font-bold text-slate-500 text-sm print:text-xs">
+            <td class="font-bold">
                 {{ cat.name }}
             </td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
-                {{ cat.get_status_display }}
-            </td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">{{ cat.age }}</td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
-                {{ cat.intake_date|date:"M d, Y" }}
-            </td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">{{ cat.sex }}</td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">{{ cat.breed }}</td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
-                {{ cat.primary_color }}
-            </td>
-            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
+            <td>{{ cat.age }}</td>
+            <td>{{ cat.sex }}</td>
+            <td>
                 {{ cat.location }}
             </td>
+            <td>
+                {{ cat.intake_date|date:"M d, Y" }}
+            </td>
+            <td >{{ cat.clean_breed }}</td>
+            <td >{{ cat.primary_color }}</td>
             <!--
             <td class="p-4 text-slate-600 text-sm">
                 {{ cat.first_seen|date:"M d, Y" }}

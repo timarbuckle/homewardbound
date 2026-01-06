@@ -44,6 +44,13 @@ class Cat(models.Model):
             return f"{months}mo"
         return f"{years}y{months}mo"
 
+    @property
+    def clean_breed(self):
+        # Remove the word "Domestic" from the breed name
+        substring_to_remove = "Domestic "
+        if self.breed:
+            return self.breed.replace(substring_to_remove, "").strip()
+        return self.breed
 
 class UpdateLog(models.Model):
     last_updated = models.DateTimeField()

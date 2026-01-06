@@ -152,7 +152,7 @@ def report_view(request):
     cats = Cat.objects.filter(
         Q(status=CatStatus.AVAILABLE) |
         Q(status=CatStatus.NEW)
-        ).order_by("-birthday")
+        ).order_by("-birthday", "name")
     context = {
         "cats": cats,
     }
