@@ -89,7 +89,7 @@ class UpdateCats:
         item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
         new_cat_count = 0
         total_cats = 0
-        datetime_now = datetime.now()
+        datetime_now = timezone.now()
         # 3. Loop through each container and extract the data
         for container in item_containers:
             total_cats += 1
