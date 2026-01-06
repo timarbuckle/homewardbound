@@ -10,6 +10,7 @@ dependencies = [
     "django-lockdown>=5.0.0",
     "gunicorn>=23.0.0",
     "httpx>=0.28.1",
+    "pillow>=12.1.0",
     "selenium>=4.38.0",
     "uvicorn>=0.40.0",
     "whitenoise>=6.11.0",

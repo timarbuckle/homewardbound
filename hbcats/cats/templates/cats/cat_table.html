@@ -68,11 +68,14 @@
     </thead>
     <tbody id="cat-table-body" class="divide-y divide-slate-100">
         {% for cat in cats %}
-        <tr class="hover:bg-slate-50 transition hover-container" data-image-url="{{ cat.image_url }}">
+        <!--
+        <tr class="hover:bg-slate-50 transition hover-container" data-image-url="{{ cat.image.url }}">
+        -->
+        <tr>
             <td class="p-4 flex flex-col items-center gap-2">
                 <span class="font-bold text-lg text-slate-900 text-center">{{ cat.name }}</span>
                 <img
-                    src="{{ cat.image_url }}"
+                    src="{{ cat.image.url }}"
                     class="w-48 h-48 square-full object-cover border border-slate-200 shadow-sm thumbnail"
                     alt="Thumbnail"
                 />

@@ -1,9 +1,19 @@
 from datetime import date
+import httpx
+import logging
 from typing import cast
 
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
+from django.core.files import File
+from django.core.files.base import ContentFile
+from urllib.request import urlretrieve
 
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class CatStatus(models.TextChoices):
     AVAILABLE = "available", "Available"
@@ -22,6 +32,7 @@ class Cat(models.Model):
     intake_date = models.DateField(null=True, blank=True, default=timezone.now)
     location = models.CharField(max_length=25, default="Unknown")
     image_url = models.URLField()
+    image = models.ImageField(upload_to='cats/', null=True, blank=True)
     first_seen = models.DateTimeField()
     last_seen = models.DateTimeField()
     last_updated = models.DateTimeField(auto_now=True)
@@ -57,3 +68,26 @@ class UpdateLog(models.Model):
     total_cats = models.IntegerField(default=0)
     new_cats = models.IntegerField(default=0)
     adopted_cats = models.IntegerField(default=0)
+
+
+@receiver(post_save, sender=Cat)
+def download_image_on_save(sender, instance, created, **kwargs):
+    # Only trigger if there's a URL but no local image yet
+    if instance.image_url and not instance.image:
+        try:
+            with httpx.Client(follow_redirects=True) as client:
+                response = client.get(instance.image_url, timeout=10.0)
+                response.raise_for_status()
+                
+                # Extract filename
+                file_name = instance.image_url.split("/")[-1]
+                
+                # We use .save(save=False) inside a signal to avoid infinite loops
+                instance.image.save(file_name, ContentFile(response.content), save=False)
+                
+                # Update only the image field to finalize
+                instance.save(update_fields=['image'])
+                
+        except Exception as e:
+            # In a production app, you might want to log this to a file
+            logger.error(f"Failed to auto-download image for {instance.name}: {e}")

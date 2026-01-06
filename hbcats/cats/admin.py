@@ -67,12 +67,12 @@ class CatAdmin(admin.ModelAdmin):
     @admin.display(description="Photo")
     def photo_preview(self, obj):
         # Check if the object has a photo file associated with it
-        if obj.image_url:
+        if obj.image:
             # Use format_html to securely render the HTML <img> tag
             # We set a max width/height for a nice thumbnail size
             return format_html(
                 '<img src="{}" width="50" height="50" style="border-radius: 5px;" />',
-                obj.image_url,
+                obj.image.url,
             )
 
         return "No Image"  # Return a string if no photo exists
@@ -80,11 +80,11 @@ class CatAdmin(admin.ModelAdmin):
     # Define the custom method for the large image display
     @admin.display(description="Photo")
     def large_photo_preview(self, obj):
-        if obj.image_url:
+        if obj.image:
             # Set larger dimensions (e.g., 200x200 or more)
             return format_html(
                 '<img src="{}" width="200" height="200" style="border-radius: 5px; border: 1px solid #ccc;" />',
-                obj.image_url,
+                obj.image.url,
             )
         return "No Image Uploaded"
 
