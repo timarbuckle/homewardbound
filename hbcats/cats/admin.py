@@ -61,7 +61,7 @@ class CatAdmin(admin.ModelAdmin):
     )
     search_fields = ("name", "image_cy", "first_seen", "last_seen")
     list_filter = (RecentCatsFilter, "last_seen", "name")
-    # readonly_fields = ("image_cy", "name", "image_url", "first_seen", "last_seen")
+    readonly_fields = ("image_cy", "name", "image_url", "first_seen", "last_seen")
 
     # Define the custom method to display the image
     @admin.display(description="Photo")
@@ -124,13 +124,12 @@ class CatAdmin(admin.ModelAdmin):
         # return super().changelist_view(request, extra_context)
 
     def run_custom_task(self, request):
-        # Implement your update logic here
+
         UpdateCats().update_cats()
         self.message_user(
             request, "Cat list updated successfully", level=messages.SUCCESS
         )
 
-        # 3. Redirect back to the change list view
         return redirect("..")  # Redirects to the current admin list page
 
     def get_urls(self):

@@ -1,7 +1,6 @@
 import logging
 from datetime import time, timedelta
 
-# from imaplib import Commands
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils import timezone
@@ -13,7 +12,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-# Create your views here.
 def cat_list_view(request):
     filter_type = request.GET.get("filter", "all")
     sort = request.GET.get("sort", "name")  # Default sorting by name
@@ -49,9 +47,7 @@ def cat_list_view(request):
 
     # Filter the cats based on the filter_type
     if filter_type == "new":
-        # logger.debug("Filtering new cats")
         time_threshold = timezone.now() - timedelta(hours=24)
-        # cats = Cat.objects.filter(status=CatStatus.NEW)
         cats = Cat.objects.filter(
             Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW),
             first_seen__gte=time_threshold,
@@ -62,9 +58,7 @@ def cat_list_view(request):
         cats = Cat.objects.filter(
             status=CatStatus.ADOPTED, last_seen__gte=time_threshold
         )
-        # cats = Cat.objects.filter(status=CatStatus.ADOPTED)
     else:
-        # logger.debug("Filtering available cats")
         cats = Cat.objects.filter(
             Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW)
         )
@@ -87,27 +81,23 @@ def cat_list_view(request):
 
 @require_POST
 def update_cats_view(request):
-    # This view would trigger the UpdateCats process
     from .updatecats import UpdateCats
 
     updater = UpdateCats()
     response = updater.update_cats()
 
-    # After updating, redirect back to the cat list view
-    # return redirect('cat_list')
     context = {
         "total_cats": response["Total"],
         "new_cats": response["New"],
         "adopted_cats": response["Adopted"],
     }
 
-    # 3. RETURN ONLY THE STATS PARTIAL
     return render(request, "cats/stats_bar.html", context)
 
 
 @require_POST
 def update_all_cats_view(request):
-    # This view would trigger the UpdateCats process
+    # update every cat's details, should be used rarely
     from .updatecats import UpdateCats
 
     updater = UpdateCats()
@@ -121,15 +111,11 @@ def update_all_cats_view(request):
         "current_sort": "name",
         "current_sort_order": "asc",
     }
-    # return render(request, "cats/cat_table.html", {"cats": Cat.objects.all()})
     return render(request, "cats/cat_table.html", context=context)
 
 
 @require_POST
 def update_stats_view(request):
-    from .models import Cat, CatStatus
-
-    # valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW, CatStatus.ADOPTED]
     valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
 
     today = timezone.localdate()
@@ -147,8 +133,6 @@ def update_stats_view(request):
 
 
 def report_view(request):
-    from .models import Cat  # , CatStatus
-
     cats = Cat.objects.filter(
         Q(status=CatStatus.AVAILABLE) |
         Q(status=CatStatus.NEW)
