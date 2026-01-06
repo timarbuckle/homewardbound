@@ -149,8 +149,11 @@ def update_stats_view(request):
 def report_view(request):
     from .models import Cat  # , CatStatus
 
-    cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
+    cats = Cat.objects.filter(
+        Q(status=CatStatus.AVAILABLE) |
+        Q(status=CatStatus.NEW)
+        ).order_by("-birthday")
     context = {
-        "cats": cats.order_by("birthday"),
+        "cats": cats,
     }
     return render(request, "cats/report.html", context)

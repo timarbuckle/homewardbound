@@ -52,35 +52,23 @@
     </thead>
     <tbody id="report-body" class="divide-y divide-slate-100">
         {% for cat in cats %}
-        <tr
-            class="hover:bg-slate-50 transition hover-container"
-            data-image-url="{{ cat.image_url }}"
-        >
-            <td class="p-4 flex flex-col items-center gap-2">
-                <span class="font-bold text-lg text-slate-900 text-center"
-                    >{{ cat.name }}</span
-                >
-                <img
-                    src="{{ cat.image_url }}"
-                    class="w-48 h-48 square-full object-cover border border-slate-200 shadow-sm thumbnail"
-                    alt="Thumbnail"
-                />
+        <tr>
+            <td class="p-4 print:p-1 font-bold text-slate-500 text-sm print:text-xs">
+                {{ cat.name }}
             </td>
-            <td class="p-4 text-slate-500 font-mono text-sm">
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
                 {{ cat.get_status_display }}
             </td>
-            <td class="p-4 text-slate-600 text-sm">{{ cat.age }}</td>
-            <td class="p-4 text-slate-600 text-sm">
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">{{ cat.age }}</td>
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
                 {{ cat.intake_date|date:"M d, Y" }}
             </td>
-            <td class="p-4 text-slate-500 font-mono text-sm">{{ cat.sex }}</td>
-            <td class="p-4 text-slate-500 font-mono text-sm">
-                {{ cat.breed }}
-            </td>
-            <td class="p-4 text-slate-500 font-mono text-sm">
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">{{ cat.sex }}</td>
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">{{ cat.breed }}</td>
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
                 {{ cat.primary_color }}
             </td>
-            <td class="p-4 text-slate-500 font-mono text-sm">
+            <td class="p-4 print:p-1 text-slate-500 text-sm print:text-xs">
                 {{ cat.location }}
             </td>
             <!--
