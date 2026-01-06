@@ -13,3 +13,4 @@ wheels/
 chrome-mac-arm64.zip
 hbcats/static
 hbcats/hbcats.log
+.env
