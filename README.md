@@ -3,7 +3,7 @@ TODO:
 [x] open each cat page (use src=), import intake date, age, gender and location
 [x] sort main page by intake date
 [x] option to sort by age, gender
-[ ] add report
+[x] add report
 [x] get working from cats.timarbuckle.com
 [ ] pull images and serve locally
 [x] fix dashboard totals and filters
