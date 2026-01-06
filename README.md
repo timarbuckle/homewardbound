@@ -1,17 +1,25 @@
-TODO:
+## Project Roadmap
 
-[x] open each cat page (use src=), import intake date, age, gender and location
-[x] sort main page by intake date
-[x] option to sort by age, gender
-[x] add report
-[x] get working from cats.timarbuckle.com
-[x] pull images and serve locally
-[x] fix dashboard totals and filters
-[x] fix time zone errors below when doing update
-[x] add cron job to update on a schedule
+### Completed Tasks
+- [x] **Data Scraping:** Open each cat page (via `src=`) and import:
+    * Intake date
+    * Age
+    * Gender
+    * Location
+- [x] **Sorting & Filtering:**
+    * Sort main page by intake date by default.
+    * Added options to sort by age and gender.
+- [x] **Reporting:** Integrated the report view.
+- [x] **Deployment:** Confirmed site is working at [cats.timarbuckle.com](https://cats.timarbuckle.com).
+- [x] **Media Hosting:** Implemented local image serving (migrated away from hotlinking).
+- [x] **Dashboard:** Fixed totals and filter logic.
+- [x] **Bug Fixes:** Resolved time zone errors occurring during the update process.
+- [x] **Automation:** Added a cron job to handle updates on a set schedule.
 
-/home/tim/projects/python/homewardbound/.venv/lib/python3.14/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField Cat.last_seen received a naive datetime (2026-01-02 12:11:40.574827) while time zone support is active.
-  warnings.warn(
-/home/tim/projects/python/homewardbound/.venv/lib/python3.14/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField Cat.first_seen received a naive datetime (2026-01-02 12:11:40.574827) while time zone support is active.
-  warnings.warn(
-/home/tim/projects/python/homewardbound/.venv/lib/python3.14/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField UpdateLog.last_updated received a naive datetime (2026-01-02 12:11:40.574827) while time zone support is active.
+---
+
+### Implementation Notes
+* **Images:** Now served via `MEDIA_ROOT` and optimized through Cloudflare for better performance at the public domain.
+* **Environment:** Moved all sensitive credentials to `.env` files to keep the Git history clean.
+* **Styling:** Tailwind CSS is now compiled via a standalone CLI script to maintain a lightweight repository.
+
