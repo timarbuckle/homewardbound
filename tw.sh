@@ -11,4 +11,4 @@ else
 fi
 
 # update tailwind css
-"$tw" -i hbcats/cats/static/cats/css/input.css -o hbcats/static/cats/css/output.cs
+"$tw" -i hbcats/cats/static/cats/css/input.css -o hbcats/cats/static/cats/css/output.cs
