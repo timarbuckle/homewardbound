@@ -1,5 +1,5 @@
 import logging
-from datetime import time, timedelta
+from datetime import timedelta
 
 from django.db.models import Q
 from django.shortcuts import render
@@ -53,11 +53,7 @@ def cat_list_view(request):
             first_seen__gte=time_threshold,
         )
     elif filter_type == "adopted":
-        # logger.debug("Filtering adopted cats seen in last 24 hours")
-        time_threshold = timezone.now() - timedelta(hours=24)
-        cats = Cat.objects.filter(
-            status=CatStatus.ADOPTED, last_seen__gte=time_threshold
-        )
+        cats = Cat.objects.recent().filter(status=CatStatus.ADOPTED)
     else:
         cats = Cat.objects.filter(
             Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW)
@@ -118,16 +114,11 @@ def update_all_cats_view(request):
 def update_stats_view(request):
     valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
 
-    today = timezone.localdate()
-    yesterday = today - timedelta(days=1)
-    start_datetime = timezone.make_aware(timezone.datetime.combine(yesterday, time.min))
-
     context = {
         "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
         "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
-        "adopted_cats": Cat.objects.filter(
-            status=CatStatus.ADOPTED, last_updated__gte=start_datetime
-        ).count(),
+        "adopted_cats": Cat.objects.recent().filter(
+            status=CatStatus.ADOPTED).count(),
     }
     return render(request, "cats/stats_bar.html", context)
 

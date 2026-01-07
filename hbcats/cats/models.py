@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import httpx
 import logging
 from typing import cast
@@ -7,9 +7,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-from django.core.files import File
 from django.core.files.base import ContentFile
-from urllib.request import urlretrieve
 
 
 logger = logging.getLogger(__name__)
@@ -21,6 +19,11 @@ class CatStatus(models.TextChoices):
     PENDING = "pending", "Pending"
     NEW = "new", "New"
 
+class ItemQuerySet(models.QuerySet):
+    def recent(self):
+        """Returns items updated within the last 24 hours."""
+        time_threshold = timezone.now() - timedelta(hours=24)
+        return self.filter(last_updated__gte=time_threshold)
 
 class Cat(models.Model):
     image_cy = models.CharField(max_length=20, primary_key=True)
@@ -41,6 +44,8 @@ class Cat(models.Model):
         choices=CatStatus.choices,
         default=CatStatus.AVAILABLE,
     )
+
+    objects = ItemQuerySet.as_manager()
 
     @property
     def age(self):
