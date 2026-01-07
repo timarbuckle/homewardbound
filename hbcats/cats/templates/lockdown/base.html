@@ -1,16 +1,15 @@
 {% load static %}
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<script src="https://cdn.tailwindcss.com"></script>
-<!--
-<link rel="stylesheet" href="{% static 'cats/css/output.css' %}">
--->
-<title>{% block title %}{% endblock %}</title>
-</head>
-<body>
-{% block content %}
-{% endblock %}
-</body>
+    <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!--
+        <link rel="stylesheet" href="{% static 'cats/css/output.css' %}" />
+        -->
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        {% block content %} {% endblock %}
+    </body>
 </html>
