@@ -70,7 +70,9 @@ def cat_list_view(request):
 
     # Render the appropriate template
     if request.headers.get("HX-Request"):
-        return render(request, "cats/cat_table.html", context)
+        response = render(request, "cats/cat_table.html", context)
+        response["HX-Trigger"] = "refreshStats"
+        return response
 
     return render(request, "cats/dashboard.html", context)
 

@@ -53,7 +53,12 @@
         </div>
     </div>
 
-    <div id="stats-display" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div
+        id="stats-display"
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+        hx-post="{% url 'update_stats' %}"
+        hx-trigger="refreshStats from:body"
+        >
         {% include 'cats/stats_bar.html' %}
     </div>
 
