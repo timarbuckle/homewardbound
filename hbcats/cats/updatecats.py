@@ -31,7 +31,8 @@ class UpdateCats:
         self.driver = None
 
     def update_cats(self):
-        logger.info("Updating cats...")
+        datetime_now = timezone.now()
+        logger.info(f"{datetime_now}: Updating cats ...")
         # reset status of all NEW cats to AVAILABLE
         Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
 
@@ -39,7 +40,7 @@ class UpdateCats:
             # options.binary_location = "/usr/local/bin/chromedriver"
             # options.binary_location = "/opt/homebrew/bin/chromium"
             options = SafariOptions()
-            options.add_argument("--headless")  # Run without a GUI
+            options.add_argument("--headless=new")  # Run without a GUI
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             driver = webdriver.Safari(options=options)
@@ -79,9 +80,9 @@ class UpdateCats:
             # Update the height for the next iteration
             last_height = new_height
 
+
         # 1. Initialize Beautiful Soup
         soup = BeautifulSoup(driver.page_source, "html.parser")
-
         # 2. Find all the individual item containers
         # These are the divs with the classes "px-2 my-4 w-1/2 md:w-56"
         # Since class names can be long and change, we can target the anchor tag
@@ -89,7 +90,6 @@ class UpdateCats:
         item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
         new_cat_count = 0
         total_cats = 0
-        datetime_now = timezone.now()
         # 3. Loop through each container and extract the data
         for container in item_containers:
             total_cats += 1
@@ -155,7 +155,7 @@ class UpdateCats:
             cat.save()
 
         logger.info(
-            f"Total cats: {total_cats} New cats added: {new_cat_count} Adopted cats: {adopted.count()}"
+            f"Total cats: {total_cats} | New cats added: {new_cat_count} | Adopted cats: {adopted.count()}"
         )
         UpdateLog.objects.create(
             total_cats=total_cats,
