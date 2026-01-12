@@ -1,110 +1,58 @@
 {% extends 'cats/base.html' %} {% block content %}
-<div class="max-w-6xl mx-auto p-6">
-    <div
-        class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
-    >
-        <div>
-            <h1 class="text-3xl font-bold text-slate-800">
-                Homeward Bound Cat Registry
-            </h1>
-            <p class="text-slate-500">Track new arrivals and adoptions</p>
-        </div>
-
-        <div class="flex items-center gap-4">
-            <button
-                hx-post="{% url 'update_stats' %}"
-                hx-target="#stats-display"
-                hx-indicator="#update-spinner"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition flex items-center"
-            >
-                <span
-                    id="update-spinner"
-                    class="htmx-indicator animate-spin mr-2"
-                    >↻</span
-                >
-                Update Stats
-            </button>
-            <button
-                hx-post="{% url 'update_all_cats' %}"
-                hx-target="#stats-display"
-                hx-indicator="#update-spinner"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition flex items-center"
-            >
-                <span
-                    id="update-spinner"
-                    class="htmx-indicator animate-spin mr-2"
-                    >↻</span
-                >
-                Update All Cat Info
-            </button>
-            <button
-                hx-post="{% url 'update_cats' %}"
-                hx-target="#stats-display"
-                hx-indicator="#update-spinner"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition flex items-center"
-            >
-                <span
-                    id="update-spinner"
-                    class="htmx-indicator animate-spin mr-2"
-                    >↻</span
-                >
-                Update CurrentCats
-            </button>
-        </div>
-    </div>
+<div class="max-w-6xl mx-auto p-4 md:p-6 flex flex-col items-center">
 
     <div
         id="stats-display"
-        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+        class="w-full grid grid-cols-3 gap-2 md:gap-4 mb-6 text-center"
         hx-post="{% url 'update_stats' %}"
         hx-trigger="refreshStats from:body"
         >
         {% include 'cats/stats_bar.html' %}
     </div>
 
-    <div
-        class="flex bg-white p-2 rounded-xl shadow-sm mb-6 w-fit border border-slate-200"
-    >
-        <button
-            hx-get="{% url 'cat_list' %}?filter=all&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-            hx-target="#cat-table"
-            class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700"
-        >
-            All Cats
-        </button>
-        <button
-            hx-get="{% url 'cat_list' %}?filter=new&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-            hx-target="#cat-table"
-            class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700"
-        >
-            New Arrivals
-        </button>
-        <button
-            hx-get="{% url 'cat_list' %}?filter=adopted&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-            hx-target="#cat-table"
-            class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700"
-        >
-            Recently Adopted
-        </button>
+    <div class="flex justify-center w-full mb-6">
+        <div class="flex bg-white p-1.5 rounded-lg shadow-sm border border-slate-200 overflow-x-auto w-fit">
+            <button
+                hx-get="{% url 'cat_list' %}?filter=all&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
+                hx-target="#cat-table"
+                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
+            >
+                Available
+            </button>
+            <button
+                hx-get="{% url 'cat_list' %}?filter=new&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
+                hx-target="#cat-table"
+                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
+            >
+                New Arrivals
+            </button>
+            <button
+                hx-get="{% url 'cat_list' %}?filter=adopted&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
+                hx-target="#cat-table"
+                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
+            >
+                Recently Adopted
+            </button>
+            <button
+                hx-get="{% url 'cat_list' %}?filter=none&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
+                hx-target="#cat-table"
+                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
+            >
+               All 
+            </button>
+        </div>
     </div>
 
-    <div
-        class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
-    >
+    <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div id="cat-table">{% include 'cats/cat_table.html' %}</div>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Trigger an HTMX request to load all cats on page load
         const catTable = document.querySelector("#cat-table");
         if (catTable) {
-            htmx.ajax(
-                "GET",
-                "{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc",
-                "#cat-table",
-            );
+            htmx.ajax("GET", "{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc", "#cat-table");
         }
     });
 </script>

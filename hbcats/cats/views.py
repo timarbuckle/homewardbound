@@ -54,6 +54,8 @@ def cat_list_view(request):
         )
     elif filter_type == "adopted":
         cats = Cat.objects.recent().filter(status=CatStatus.ADOPTED)
+    elif filter_type == "none":
+        cats = Cat.objects.all()
     else:
         cats = Cat.objects.filter(
             Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW)
