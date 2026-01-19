@@ -21,5 +21,61 @@
 ### Implementation Notes
 * **Images:** Now served via `MEDIA_ROOT` and optimized through Cloudflare for better performance at the public domain.
 * **Environment:** Moved all sensitive credentials to `.env` files to keep the Git history clean.
-* **Styling:** Tailwind CSS is now compiled via a standalone CLI script to maintain a lightweight repository.
+- **Styling:** Tailwind CSS is *not yet* compiled via a standalone CLI script to maintain a lightweight repository.
+
+---
+
+## Setup Instructions
+
+### System Setup
+
+```bash
+sudo apt install guvicorn
+#
+curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$HOME/.local" sh
+sudo snap install astral-uv --classic
+sudo apt install chromium-browser chromium-chromedriver
+chromium-browser --version
+chromedriver --version
+```
+
+May have to move uv and uvx from $HOME/.local to $HOME/.local/bin and make sure $HOME/.local/bin in PATH
+
+
+### Django Project Setup
+
+```bash
+git clone git@github.com:timarbuckle/homewardbound.git
+cd homewardbound
+uv sync
+uv run hbcats/manage.py collectstatic
+```
+
+### Create .env file
+
+### Cloudflare Setup
+
+Install cloudflared service
+
+```bash
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
+sudo apt-get update && sudo apt-get install cloudflared
+```
+
+Finish configuring on Cloudflare Dashboard
+
+### Setup CRON job
+```bash
+crontab -e
+```
+add the following
+
+```
+# m h  dom mon dow   command
+0 2,14,20 * * * /home/timarbuckle/projects/homewardbound/hbcats/cats/updatecats.py >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
+
+# Daylight Saving Time
+#0 1,13,19 * * * /home/timarbuckle/projects/homewardbound/hbcats/cats/updatecats.py >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
+```
 
