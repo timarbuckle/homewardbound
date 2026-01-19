@@ -16,3 +16,4 @@ hbcats/hbcats.log
 .env
 bin/
 update_cats.log
+cats_export.json
