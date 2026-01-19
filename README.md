@@ -31,15 +31,15 @@
 
 ```bash
 sudo apt install guvicorn
-#
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$HOME/.local" sh
-sudo snap install astral-uv --classic
+# sudo snap install astral-uv --classic
 sudo apt install chromium-browser chromium-chromedriver
 chromium-browser --version
 chromedriver --version
 ```
 
-May have to move uv and uvx from $HOME/.local to $HOME/.local/bin and make sure $HOME/.local/bin in PATH
+May have to move uv and uvx from $HOME/.local to $HOME/.local/bin and make sure $HOME/.local/bin in PATH 
+or just use snap version
 
 
 ### Django Project Setup
