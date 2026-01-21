@@ -73,9 +73,9 @@ add the following
 
 ```
 # m h  dom mon dow   command
-0 2,14,20 * * * /home/timarbuckle/projects/homewardbound/hbcats/cats/updatecats.py >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
+0 2,14,20 * * * /home/timarbuckle/projects/homewardbound/update_cats.sh >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
 
 # Daylight Saving Time
-#0 1,13,19 * * * /home/timarbuckle/projects/homewardbound/hbcats/cats/updatecats.py >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
+#0 1,13,19 * * * /home/timarbuckle/projects/homewardbound/update_cats.sh >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
 ```
 
