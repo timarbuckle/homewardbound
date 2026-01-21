@@ -50,6 +50,18 @@ class UpdateCats:
             options.add_argument("--headless")  # Run without a GUI
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")          # Usually unnecessary in headless
+            options.add_argument("--disable-extensions")   # Disables background extensions
+            options.add_argument("--disable-infobars")
+            options.add_argument("--window-size=800,600")  # Smaller window = less pixels to render
+
+            # Tells Chrome not to process media or heavy features
+            prefs = {
+                "profile.managed_default_content_settings.images": 2, # Don't load images
+                "disk-cache-size": 0,                                 # Disable disk cache
+                "media-cache-size": 0                                 # Disable media cache
+            }
+            options.add_experimental_option("prefs", prefs)
             options.binary_location = "/usr/bin/chromium-browser"
             service = Service(executable_path="/usr/bin/chromedriver")
             driver = webdriver.Chrome(service=service, options=options)
