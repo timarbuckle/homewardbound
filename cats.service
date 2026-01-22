@@ -12,8 +12,10 @@ User=timarbuckle
 Group=timarbuckle
 #Group=www-data
 # The directory where your pyproject.toml and code live
-WorkingDirectory=/home/tim/projects/homewardbound
-ExecStart=/home/timarbuckle/.local/bin/uv run gunicorn --chdir hbcats -w 3 -b 0.0.0.0:8000 hbcats.wsgi:application
+WorkingDirectory=/home/timarbuckle/projects/homewardbound/hbcats
+Environment="PATH=/home/timarbuckle/.local/bin:/usr/bin:/usr/local/bin"
+EnvironmentFile=/home/timarbuckle/projects/homewardbound/.env
+ExecStart=/home/timarbuckle/.local/bin/uv run gunicorn --workers 2 --threads 4 --worker-class gthread --preload --timeout 120 --max-requests 100 --bind 0.0.0.0:8000 hbcats.wsgi:application
 Restart=always
 
 [Install]
