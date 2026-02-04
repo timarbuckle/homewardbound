@@ -79,3 +79,24 @@ add the following
 #0 1,13,19 * * * /home/timarbuckle/projects/homewardbound/update_cats.sh >> /home/timarbuckle/projects/homewardbound/update_cats.log 2>&1
 ```
 
+### SYSTEMCTL --user setup to replace CRON
+
+CRON updates were unstable so now using this to run updates on a schedule.
+* Added 2GB swap to avoid memory problems and no longer need to stop the service before running
+* Added cats.service and cats.timer in ~/.config/system/user
+* No longer use updatecats.log, check journalctl instead (see below)
+
+Whenever modify these files, need to reload
+
+Reload the configuration
+
+    systemctl --user daemon-reload
+
+Manually run the script
+
+    systemctl --user start cats.service
+
+Check the results
+
+    journalctl --user -u cats.service -f
+

@@ -1,0 +1,13 @@
+[Unit]
+Description=Run Homeward Bound Cat Update
+
+[Service]
+Type=oneshot
+# Set the working directory so relative paths work
+WorkingDirectory=/home/timarbuckle/projects/homewardbound
+# Use the full path to your venv python
+ExecStart=/home/timarbuckle/.local/bin/uv run hbcats/manage.py update
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
