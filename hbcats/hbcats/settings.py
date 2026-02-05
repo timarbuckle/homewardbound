@@ -93,10 +93,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "hbcats",
-        "USER": "kitcat",
-        "PASSWORD": "meow",
-        "HOST": "100.84.78.98",
-        "PORT": "5432",
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
