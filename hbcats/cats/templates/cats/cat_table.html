@@ -150,7 +150,7 @@
                         <div class="flex items-start gap-4">
                             <div class="w-28 text-center flex-shrink-0">
                                 <img
-                                    src="/media/{{ cat.image.name }}"
+                                    src="{{ cat.image.url }}"
                                     class="w-28 h-28 rounded-xl object-cover border border-slate-200 shadow-sm"
                                     alt="{{ cat.name }}"
                                 />
@@ -212,7 +212,7 @@
                     <td class="hidden md:table-cell p-4">
                         <div class="flex items-center gap-4">
                             <img
-                                src="/media/{{ cat.image.name }}"
+                                src="{{ cat.image.url }}"
                                 class="w-24 h-24 rounded-xl object-cover border border-slate-200 shadow-sm"
                                 alt="{{ cat.name }}"
                             />

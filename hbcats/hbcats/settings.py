@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cats",
     "lockdown",  # https://www.gyford.com/phil/writing/2012/01/24/password-django/
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -126,7 +127,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_FILES_DIRS = [BASE_DIR / "static"]
-#STATIC_FILES_DIRS = [BASE_DIR / "cats" / "static"]
+# STATIC_FILES_DIRS = [BASE_DIR / "cats" / "static"]
 STATIC_ROOT = BASE_DIR / "static"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -155,8 +156,32 @@ LOGGING = {
 LOCKDOWN_PASSWORDS = (os.getenv("LOCKDOWN_PASSWORD"),)
 LOCKDOWN_FORM = "lockdown.forms.LockdownForm"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Tells Django it's behind a proxy (Cloudflare) that handles SSL
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+GS_PROJECT_ID = (
+    "tim1-399820"  # Use your actual Project ID from your gcloud error earlier
+)
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": "hbcats",
+            "location": "media",
+            "querystring_auth": False,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+# Google Cloud Storage Settings
+# GS_BUCKET_NAME = "hbcats"
+# GS_LOCATION = "media"
+# This makes the ImageField.url property point to GCS
+# GS_QUERYSTRING_AUTH = False  # Set to True if the bucket is private/signed URLs
