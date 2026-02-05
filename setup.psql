@@ -1,0 +1,7 @@
+CREATE DATABASE hbcats;
+CREATE USER kitcat WITH PASSWORD 'password';
+ALTER ROLE kitcat SET client_encoding TO 'utf8';
+ALTER ROLE kitcat SET default_transaction_isolation TO 'read committed';
+ALTER ROLE kitcat SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE hbcats TO kitcat;
+ALTER SCHEMA public OWNER TO kitcat;

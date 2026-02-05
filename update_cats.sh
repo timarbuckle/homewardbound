@@ -4,4 +4,3 @@
 echo "updating cats ..."
 #systemctl --user start cats.service
 uv run hbcats/manage.py update
-echo "starting cats service ..."
