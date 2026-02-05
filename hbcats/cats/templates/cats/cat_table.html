@@ -150,7 +150,11 @@
                         <div class="flex items-start gap-4">
                             <div class="w-28 text-center flex-shrink-0">
                                 <img
-                                    src="{{ cat.image.url }}"
+                                    {% if cat.image %}
+                                        src="{{ cat.image.url }}"
+                                    {% else %}
+                                        src="{% static 'cats/cat_avatar.jpeg' %}"
+                                    {% endif %}
                                     class="w-28 h-28 rounded-xl object-cover border border-slate-200 shadow-sm"
                                     alt="{{ cat.name }}"
                                 />
@@ -212,7 +216,11 @@
                     <td class="hidden md:table-cell p-4">
                         <div class="flex items-center gap-4">
                             <img
-                                src="{{ cat.image.url }}"
+                                {% if cat.image %}
+                                    src="{{ cat.image.url }}"
+                                {% else %}
+                                    src="{% static 'cats/cat_avatar.jpeg' %}"
+                                {% endif %}
                                 class="w-24 h-24 rounded-xl object-cover border border-slate-200 shadow-sm"
                                 alt="{{ cat.name }}"
                             />
