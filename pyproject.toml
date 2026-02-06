@@ -19,5 +19,6 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "selenium>=4.38.0",
     "uvicorn>=0.40.0",
+    "webdriver-manager>=4.0.2",
     "whitenoise>=6.11.0",
 ]

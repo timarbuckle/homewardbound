@@ -12,6 +12,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.safari.options import Options as SafariOptions
+from webdriver_manager.chrome import ChromeDriverManager
 
 from cats.models import Cat, CatStatus, UpdateLog
 
@@ -55,15 +56,14 @@ class UpdateCats:
             options.add_argument("--disable-infobars")
             options.add_argument("--window-size=800,600")  # Smaller window = less pixels to render
 
-            # Tells Chrome not to process media or heavy features
+            # tell Chrome not to process media or heavy features
             prefs = {
                 "profile.managed_default_content_settings.images": 2, # Don't load images
                 "disk-cache-size": 0,                                 # Disable disk cache
                 "media-cache-size": 0                                 # Disable media cache
             }
             options.add_experimental_option("prefs", prefs)
-            options.binary_location = "/usr/bin/chromium-browser"
-            service = Service(executable_path="/usr/bin/chromedriver")
+            service = Service(ChromeDriverManager().install())
             driver = webdriver.Chrome(service=service, options=options)
         else:
             options = ChromeOptions()
@@ -72,91 +72,102 @@ class UpdateCats:
             options.add_argument("--disable-dev-shm-usage")
             driver = webdriver.Chrome(options=options)
 
-        driver.implicitly_wait(0.5)
-        driver.get(self.ALL_CATS_URL)
+        try:
+            driver.implicitly_wait(0.5)
+            driver.get(self.ALL_CATS_URL)
 
-        # get initial scroll height
-        last_height = driver.execute_script("return document.body.scrollHeight")
-        scroll_pause_time = 2  # Pause time to let the dynamic content load
+            # get initial scroll height
+            last_height = driver.execute_script("return document.body.scrollHeight")
+            scroll_pause_time = 2  # Pause time to let the dynamic content load
 
-        while True:
-            # Scroll down to bottom
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            # Wait for new content to load
-            sleep(scroll_pause_time)
-            # Calculate new scroll height and compare with last scroll height
-            new_height = driver.execute_script("return document.body.scrollHeight")
-            # If the heights are the same, you have reached the bottom
-            if new_height == last_height:
-                break
-            # Update the height for the next iteration
-            last_height = new_height
+            while True:
+                # Scroll down to bottom
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                # Wait for new content to load
+                sleep(scroll_pause_time)
+                # Calculate new scroll height and compare with last scroll height
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                # If the heights are the same, you have reached the bottom
+                if new_height == last_height:
+                    break
+                # Update the height for the next iteration
+                last_height = new_height
 
 
-        # 1. Initialize Beautiful Soup
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        # 2. Find all the individual item containers
-        # These are the divs with the classes "px-2 my-4 w-1/2 md:w-56"
-        # Since class names can be long and change, we can target the anchor tag
-        # or the inner div if that's more stable. Let's target the inner div:
-        item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
-        new_cat_count = 0
-        total_cats = 0
-        # 3. Loop through each container and extract the data
-        for container in item_containers:
-            total_cats += 1
-            # 3a. Extract the Image URL
-            # The image is inside the <img> tag
-            image_tag = container.find("img")
-            image_url = image_tag.get("src") if image_tag else "N/A"
-            image_cy = image_tag.get("data-cy") if image_tag else "N/A"
-            # 3b. Extract the Name
-            # The name is inside the <div> tag right after the image
-            name_div = container.find("div", class_="text-center text-gray-500 mt-2")
-            # Use get_text(strip=True) to grab the text and remove whitespace
-            name = name_div.get_text(strip=True) if name_div else "N/A"
+            # 1. initialize Beautiful Soup
+            soup = BeautifulSoup(driver.page_source, "html.parser")
+            # 2. find all the individual item containers
+            # These are the divs with the classes "px-2 my-4 w-1/2 md:w-56"
+            # Since class names can be long and change, we can target the anchor tag
+            # or the inner div if that's more stable. Let's target the inner div:
+            item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
+            new_cat_count = 0
+            total_cats = 0
+            # 3. loop through each container and extract the data
+            for container in item_containers:
+                total_cats += 1
+                # 3a. Extract the Image URL
+                # The image is inside the <img> tag
+                image_tag = container.find("img")
+                image_url = image_tag.get("src") if image_tag else "N/A"
+                image_cy = image_tag.get("data-cy") if image_tag else "N/A"
+                # 3b. Extract the Name
+                # The name is inside the <div> tag right after the image
+                name_div = container.find("div", class_="text-center text-gray-500 mt-2")
+                # Use get_text(strip=True) to grab the text and remove whitespace
+                name = name_div.get_text(strip=True) if name_div else "N/A"
 
-            # Store the results
-            obj = Cat.objects.filter(image_cy=image_cy).first()
-            if obj:
-                obj.last_seen = datetime_now
-                # handle if cat was adopted and is now back
-                if obj.status == CatStatus.ADOPTED:
+                # Store the results
+                obj = Cat.objects.filter(image_cy=image_cy).first()
+                if obj:
+                    obj.last_seen = datetime_now
+                    # handle if cat was adopted and is now back
+                    if obj.status == CatStatus.ADOPTED:
+                        new_cat_count += 1
+                        obj.status = CatStatus.NEW
+                    obj.save()
+                else:
                     new_cat_count += 1
-                    obj.status = CatStatus.NEW
-                obj.save()
-            else:
-                new_cat_count += 1
 
-                cat_details_url = self.get_animal_info_url(image_cy)
-                cat_details = self.get_animal_details(cat_details_url)
+                    cat_details_url = self.get_animal_info_url(image_cy)
+                    cat_details = self.get_animal_details(cat_details_url)
 
-                cat_birthday_raw = cat_details.get("birthday") or "0"
-                cat_birthday = timezone.make_aware(
-                    datetime.fromtimestamp(int(cat_birthday_raw))
-                )
-                cat_intake_date_raw = cat_details.get("intake_date") or "0"
-                cat_intake_date = timezone.make_aware(
-                    datetime.fromtimestamp(int(cat_intake_date_raw))
-                )
+                    cat_birthday_raw = cat_details.get("birthday") or "0"
+                    cat_birthday = timezone.make_aware(
+                        datetime.fromtimestamp(int(cat_birthday_raw))
+                    )
+                    cat_intake_date_raw = cat_details.get("intake_date") or "0"
+                    cat_intake_date = timezone.make_aware(
+                        datetime.fromtimestamp(int(cat_intake_date_raw))
+                    )
 
-                Cat.objects.create(
-                    name=name,
-                    sex=cat_details.get("sex", "N/A"),
-                    location=cat_details.get("location", "N/A"),
-                    birthday=cat_birthday,
-                    breed=cat_details.get("breed", "N/A"),
-                    primary_color=cat_details.get("primary_color", "N/A"),
-                    intake_date=cat_intake_date,
-                    image_url=image_url,
-                    image_cy=image_cy,
-                    first_seen=datetime_now,
-                    last_seen=datetime_now,
-                    status=CatStatus.NEW,
-                )
-                logger.info(f"New cat added: {name}")
-
-        driver.quit()
+                    Cat.objects.create(
+                        name=name,
+                        sex=cat_details.get("sex", "N/A"),
+                        location=cat_details.get("location", "N/A"),
+                        birthday=cat_birthday,
+                        breed=cat_details.get("breed", "N/A"),
+                        primary_color=cat_details.get("primary_color", "N/A"),
+                        intake_date=cat_intake_date,
+                        image_url=image_url,
+                        image_cy=image_cy,
+                        first_seen=datetime_now,
+                        last_seen=datetime_now,
+                        status=CatStatus.NEW,
+                    )
+                    logger.info(f"New cat added: {name}")
+        except WebDriverException as e:
+            # this catches browser-specific errors (crash, timeout, etc.)
+            logger.error(f"Selenium Error: {str(e)}", exc_info=True)
+        except Exception as e:
+            # this catches non-Selenium Python errors
+            logger.error(f"General Error: {str(e)}", exc_info=True)
+        finally:
+            if driver:
+                try:
+                    driver.quit() # important
+                except:
+                    pass # already closed or crashed
 
         # calculate number of cats adopted, cats not seen today and not marked as adopted
         adopted = Cat.objects.filter(
