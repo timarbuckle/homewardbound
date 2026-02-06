@@ -55,6 +55,10 @@ class UpdateCats:
             options.add_argument("--disable-extensions")   # Disables background extensions
             options.add_argument("--disable-infobars")
             options.add_argument("--window-size=800,600")  # Smaller window = less pixels to render
+            options.add_argument("--blink-settings=imagesEnabled=false") # Don't load images (huge RAM saver)
+            options.add_argument("--disable-notifications")      # Stops background notification processes
+            options.add_argument("--no-first-run")
+            # options.add_argument("--single-process")      # use if needed
 
             # tell Chrome not to process media or heavy features
             prefs = {
