@@ -10,6 +10,7 @@ dependencies = [
     "django-lockdown>=5.0.0",
     "django-storages>=1.14.6",
     "dotenv>=0.9.9",
+    "google-cloud-logging>=3.13.0",
     "google-cloud-storage>=3.9.0",
     "gunicorn>=23.0.0",
     "httpx>=0.28.1",

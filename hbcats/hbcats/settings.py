@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import google.cloud.logging
+from google.cloud.logging.handlers import CloudLoggingHandler
+
+client = google.cloud.logging.Client()
+handler = CloudLoggingHandler(client)
 
 load_dotenv()
 
@@ -147,22 +152,25 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGGING = {
-    "version": 1,  # the dictConfig format version
-    "disable_existing_loggers": False,  # retain the default loggers
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "level": "DEBUG",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler', # Still shows logs in your terminal
+        },
+        'stackdriver': {
+            'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
+            'client': client,
         },
     },
-    "loggers": {
-        "": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": True,
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'stackdriver'], # Sends to both!
+            'level': 'INFO',
         },
     },
 }
+
 LOCKDOWN_PASSWORDS = (os.getenv("LOCKDOWN_PASSWORD"),)
 LOCKDOWN_FORM = "lockdown.forms.LockdownForm"
 
@@ -174,7 +182,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_PROJECT_ID = (
-    "tim1-399820"  # Use your actual Project ID from your gcloud error earlier
+    os.getenv("GCP_PROJECTID")  # Use your actual Project ID from your gcloud error earlier
 )
 STORAGES = {
     "default": {
