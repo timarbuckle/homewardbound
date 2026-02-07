@@ -150,24 +150,16 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler', # Still shows logs in your terminal
-        },
-        'stackdriver': {
-            'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
-            'client': client,
+    "version": 1,
+    "handlers": {
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "/var/log/django/cats.log",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'stackdriver'], # Sends to both!
-            'level': 'INFO',
-        },
+    "loggers": {
+        "django": {"handlers": ["file"], "level": "INFO"},
     },
 }
 

@@ -16,6 +16,7 @@ def cat_list_view(request):
     filter_type = request.GET.get("filter", "all")
     sort = request.GET.get("sort", "name")  # Default sorting by name
     sort_order = request.GET.get("sort_order", "asc")  # Default to ascending order
+    valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
 
     valid_sort_fields = [
         "name",
@@ -27,7 +28,7 @@ def cat_list_view(request):
         "primary_color",
         "location",
     ]
-    # logger.info(f"sort: {sort}, sort_order: {sort_order}")
+    logger.info(f"cat_list_view filter_type: {filter_type}, sort: {sort}, sort_order: {sort_order}")
 
     # Ensure the sort field is valid
     if sort not in valid_sort_fields:
@@ -68,6 +69,9 @@ def cat_list_view(request):
         "current_sort_order": "desc"
         if sort_field.startswith("-")
         else "asc",  # Toggle sort order
+        "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
+        "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
+        "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
     }
 
     # Render the appropriate template
@@ -84,7 +88,9 @@ def update_cats_view(request):
     from .updatecats import UpdateCats
 
     updater = UpdateCats()
+    logger.info("calling update_cats")
     response = updater.update_cats()
+    logger.info("completed update_cats")
 
     context = {
         "total_cats": response["Total"],
@@ -101,7 +107,9 @@ def update_all_cats_view(request):
     from .updatecats import UpdateCats
 
     updater = UpdateCats()
+    logger.info("calling update_cat_details")
     updater.update_all_cat_details()
+    logger.info("completed update_cat_details")
 
     cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
 
@@ -121,8 +129,7 @@ def update_stats_view(request):
     context = {
         "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
         "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
-        "adopted_cats": Cat.objects.recent().filter(
-            status=CatStatus.ADOPTED).count(),
+        "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
     }
     return render(request, "cats/stats_bar.html", context)
 

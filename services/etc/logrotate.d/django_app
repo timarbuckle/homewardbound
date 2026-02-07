@@ -1,0 +1,10 @@
+/var/log/django/cats.log {
+    daily
+    rotate 7
+    size 10M
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
