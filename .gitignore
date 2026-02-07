@@ -19,3 +19,4 @@ update_cats.log
 cats_export.json
 .DS_Store
 datadump.json
+*.log

@@ -155,7 +155,7 @@ LOGGING = {
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
-            "filename": "/var/log/django/cats.log",
+            "filename": os.getenv("LOG_FILE"),
         },
     },
     "loggers": {
@@ -169,13 +169,11 @@ LOCKDOWN_FORM = "lockdown.forms.LockdownForm"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# Tells Django it's behind a proxy (Cloudflare) that handles SSL
+# tells Django it is behind a proxy (Cloudflare) that handles SSL
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-GS_PROJECT_ID = (
-    os.getenv("GCP_PROJECTID")  # Use your actual Project ID from your gcloud error earlier
-)
+GS_PROJECT_ID = os.getenv("GCP_PROJECTID")
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
