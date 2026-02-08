@@ -170,6 +170,7 @@ LOCKDOWN_URL_EXCEPTIONS = (
     r"^/api/update/$",
     r"^/api/update_all/$",
     r"^/api/new/$",
+    r"^/api/stats/$",
 )
 
 MEDIA_URL = "/media/"

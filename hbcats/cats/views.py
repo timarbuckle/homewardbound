@@ -12,12 +12,12 @@ from .models import Cat, CatStatus
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 
+valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
 
 def cat_list_view(request):
     filter_type = request.GET.get("filter", "all")
     sort = request.GET.get("sort", "name")  # Default sorting by name
     sort_order = request.GET.get("sort_order", "asc")  # Default to ascending order
-    valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
 
     valid_sort_fields = [
         "name",
@@ -141,8 +141,6 @@ def update_all_cats_latest_details():
 
 @require_POST
 def update_stats_view(request):
-    valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
-
     context = {
         "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
         "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
@@ -164,7 +162,7 @@ def report_view(request):
 
 @require_GET
 def hello_world_api_view(request):
-    return JsonResponse({"message": "Hello, World!"})
+    return JsonResponse({"message": "Meow!"})
 
 @require_GET
 def new_cats_api_view(request):
@@ -187,5 +185,18 @@ def new_cats_api_view(request):
                 "location": cat.location,
             } for cat in cats
         ],
+    }
+    return JsonResponse(data)
+
+@require_GET
+def stats_api_view(request):
+    time_threshold = timezone.now() - timedelta(hours=24)
+    data= {
+        "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
+        "new_cats": Cat.objects.filter(
+            Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW),
+            first_seen__gte=time_threshold
+            ).count(),
+        "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
     }
     return JsonResponse(data)
