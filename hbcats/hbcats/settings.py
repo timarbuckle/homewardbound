@@ -165,6 +165,11 @@ LOGGING = {
 
 LOCKDOWN_PASSWORDS = (os.getenv("LOCKDOWN_PASSWORD"),)
 LOCKDOWN_FORM = "lockdown.forms.LockdownForm"
+LOCKDOWN_URL_EXCEPTIONS = (
+    r"^/api/hello/$",
+    r"^/api/update/$",
+    r"^/api/update_all/$",
+)
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")

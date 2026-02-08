@@ -4,12 +4,13 @@ from datetime import timedelta
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET  #, require_http_methods
+from django.http import HttpResponse, JsonResponse
 
 from .models import Cat, CatStatus
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
 
 
 def cat_list_view(request):
@@ -83,12 +84,23 @@ def cat_list_view(request):
     return render(request, "cats/dashboard.html", context)
 
 
+# POST is used within the app from the menu via HTMX
+# GET is used to run update without having to return
+# a separate instance of the app via manage.py update
 @require_POST
 def update_cats_view(request):
-    from .updatecats import UpdateCats
+    context = update_cats_latest()
+    return render(request, "cats/stats_bar.html", context)
 
-    updater = UpdateCats()
+@require_GET
+def update_cats_api_view(request):
+    context = update_cats_latest()
+    return JsonResponse(context)
+
+def update_cats_latest():
     logger.info("calling update_cats")
+    from .updatecats import UpdateCats
+    updater = UpdateCats()
     response = updater.update_cats()
     logger.info("completed update_cats")
 
@@ -97,20 +109,11 @@ def update_cats_view(request):
         "new_cats": response["New"],
         "adopted_cats": response["Adopted"],
     }
-
-    return render(request, "cats/stats_bar.html", context)
-
+    return context
 
 @require_POST
 def update_all_cats_view(request):
-    # update every cat's details, should be used rarely
-    from .updatecats import UpdateCats
-
-    updater = UpdateCats()
-    logger.info("calling update_cat_details")
-    updater.update_all_cat_details()
-    logger.info("completed update_cat_details")
-
+    update_all_cats_latest_details()
     cats = Cat.objects.filter(Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW))
 
     context = {
@@ -121,6 +124,20 @@ def update_all_cats_view(request):
     }
     return render(request, "cats/cat_table.html", context=context)
 
+@require_GET
+def update_all_cats_api_view(request):
+    update_all_cats_latest_details()
+    return HttpResponse(status=204)
+
+def update_all_cats_latest_details():
+    # update every cat's details, should be used rarely
+    from .updatecats import UpdateCats
+
+    logger.info("calling update_all_cat_details")
+    updater = UpdateCats()
+    updater.update_all_cat_details()
+    logger.info("completed update_all_cat_details")
+    return
 
 @require_POST
 def update_stats_view(request):
@@ -143,3 +160,8 @@ def report_view(request):
         "cats": cats,
     }
     return render(request, "cats/report.html", context)
+
+
+@require_GET
+def hello_world_api_view(request):
+    return JsonResponse({"message": "Hello, World!"})
