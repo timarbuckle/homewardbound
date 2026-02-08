@@ -9,6 +9,7 @@ urlpatterns = [
     path("api/update/", views.update_cats_api_view, name="update_cats_api"),
     path("api/update_all/", views.update_all_cats_api_view, name="update_all_cats_api"),
     path("api/hello/", views.hello_world_api_view, name="hello_world_api"),
+    path("api/new/", views.new_cats_api_view, name="new_cats_api"),
     path("stats/", views.update_stats_view, name="update_stats"),
     path("report/", views.report_view, name="report"),
 ]

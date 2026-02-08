@@ -165,3 +165,27 @@ def report_view(request):
 @require_GET
 def hello_world_api_view(request):
     return JsonResponse({"message": "Hello, World!"})
+
+@require_GET
+def new_cats_api_view(request):
+    time_threshold = timezone.now() - timedelta(hours=24)
+    cats = Cat.objects.filter(
+        Q(status=CatStatus.AVAILABLE) | Q(status=CatStatus.NEW),
+        first_seen__gte=time_threshold,
+    )
+    data = {
+        "count": cats.count(),
+        "cats": [
+            {
+                "name": cat.name,
+                "status": cat.status,
+                "birthday": cat.birthday.strftime("%Y-%m-%d"),
+                "intake_date": cat.intake_date.strftime("%Y-%m-%d"),
+                "sex": cat.sex,
+                "breed": cat.breed,
+                "primary_color": cat.primary_color,
+                "location": cat.location,
+            } for cat in cats
+        ],
+    }
+    return JsonResponse(data)
