@@ -100,3 +100,7 @@ Check the results
 
     journalctl --user -u cats.service -f
 
+### DJANGO LOCKDOWN
+
+I am using this to prevent others from accessing the site.
+[django-lockdown on PyPi](https://pypi.org/project/django-lockdown/)
