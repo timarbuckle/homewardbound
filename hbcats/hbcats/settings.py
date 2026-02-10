@@ -13,11 +13,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import google.cloud.logging
-from google.cloud.logging.handlers import CloudLoggingHandler
+#import google.cloud.logging
+#from google.cloud.logging.handlers import CloudLoggingHandler
 
-client = google.cloud.logging.Client()
-handler = CloudLoggingHandler(client)
+#client = google.cloud.logging.Client()
+#handler = CloudLoggingHandler(client)
 
 load_dotenv()
 
@@ -150,18 +150,40 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
 LOGGING = {
     "version": 1,
+    "disable_existing_loggers": False, # Good practice to keep this False
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "file": {
+            "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": os.getenv("LOG_FILE"),
+            "filename": os.getenv("LOG_FILE", "django.log"),
+            "formatter": "verbose", # Highly recommended for file logs
         },
     },
     "loggers": {
-        "django": {"handlers": ["file"], "level": "INFO"},
+        # This is the "Catch-all" root logger
+        "": {
+            "handlers": ["file"],
+            "level": "INFO",
+        },
+        # You can keep this if you want specific control over Django's own logs
+        "django": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
+
 
 LOCKDOWN_PASSWORDS = (os.getenv("LOCKDOWN_PASSWORD"),)
 LOCKDOWN_FORM = "lockdown.forms.LockdownForm"

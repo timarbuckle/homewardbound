@@ -162,6 +162,7 @@ def report_view(request):
 
 @require_GET
 def hello_world_api_view(request):
+    logger.info("Meow!")
     return JsonResponse({"message": "Meow!"})
 
 @require_GET
