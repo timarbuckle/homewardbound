@@ -47,12 +47,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django_prometheus',
     "cats",
     "lockdown",  # https://www.gyford.com/phil/writing/2012/01/24/password-django/
     "storages",
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "cats.middleware.MediaCacheMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -63,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "lockdown.middleware.LockdownMiddleware",
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = "hbcats.urls"
@@ -193,6 +196,8 @@ LOCKDOWN_URL_EXCEPTIONS = (
     r"^/api/update_all/$",
     r"^/api/new/$",
     r"^/api/stats/$",
+    r"^/metrics/$",
+    r"^/metrics$",
 )
 
 MEDIA_URL = "/media/"

@@ -8,6 +8,7 @@ dependencies = [
     "bs4>=0.0.2",
     "django>=5.2.8",
     "django-lockdown>=5.0.0",
+    "django-prometheus>=2.4.1",
     "django-storages>=1.14.6",
     "dotenv>=0.9.9",
     "google-cloud-logging>=3.13.0",

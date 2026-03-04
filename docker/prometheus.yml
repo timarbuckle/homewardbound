@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s  # How often to ask Django for metrics
+
+scrape_configs:
+  - job_name: 'django-app'
+    metrics_path: '/metrics'
+    static_configs:
+      # If running Django on your host machine and Prometheus in Docker:
+      - targets: ['172.17.0.1:8000']
