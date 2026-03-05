@@ -201,12 +201,12 @@ class UpdateCats:
         return self.CAT_DETAILS_URL + animal_id
 
     def get_animal_details(self, url):
-        # 1. Fetch the page
+        # fetch the page
         try:
             with httpx.Client(follow_redirects=True) as client:
                 response = client.get(url)
                 response.raise_for_status()
-            # 2. Parse the HTML
+            # parse the HTML
             soup = BeautifulSoup(response.text, "html.parser")
             tag = soup.find("iframe-animal")
             animal = tag.get(":animal", "{}")
@@ -221,10 +221,6 @@ class UpdateCats:
     def update_all_cat_details(self):
         cats = Cat.objects.all()
         for cat in cats:
-            # Skip cats with known sex, already pulled the data
-            # if cat.sex != "Unknown":
-            #    continue
-
             cat_details_url = self.get_animal_info_url(cat.image_cy)
             logger.info(f"Requesting details for cat {cat.name}")
             cat_details = self.get_animal_details(cat_details_url)
