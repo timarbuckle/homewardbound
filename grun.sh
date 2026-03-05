@@ -4,8 +4,8 @@
 
 uv run gunicorn hbcats.wsgi:application \
   --chdir hbcats \
-  --workers 2 \
-  --threads 4 \
+  --workers 1 \
+  --threads 2 \
   --worker-class gthread \
   --preload \
   --timeout 120 \
