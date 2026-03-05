@@ -68,7 +68,8 @@ class UpdateCats:
                 "media-cache-size": 0                                 # Disable media cache
             }
             options.add_experimental_option("prefs", prefs)
-            service = Service(os.getenv("CHROMEDRIVER_PATH"))
+            options.binary_location = os.getenv("CHROMEBROWSER_PATH")
+            service = Service(executable_path=os.getenv("CHROMEDRIVER_PATH"))
             driver = webdriver.Chrome(service=service, options=options)
         else:
             options = ChromeOptions()
