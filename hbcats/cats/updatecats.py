@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import platform
 from datetime import datetime
 from time import sleep
@@ -12,7 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.safari.options import Options as SafariOptions
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import WebDriverException
 
 from cats.models import Cat, CatStatus, UpdateLog
 
@@ -67,7 +68,7 @@ class UpdateCats:
                 "media-cache-size": 0                                 # Disable media cache
             }
             options.add_experimental_option("prefs", prefs)
-            service = Service(ChromeDriverManager().install())
+            service = Service(os.getenv("CHROMEDRIVER_PATH"))
             driver = webdriver.Chrome(service=service, options=options)
         else:
             options = ChromeOptions()
