@@ -100,6 +100,9 @@ Check the results
 
     journalctl --user -u cats.service -f
 
+
+To stop, disable and stop both cats.service and cats.timer.
+
 ### DJANGO LOCKDOWN
 
 I am using this to prevent others from accessing the site.
