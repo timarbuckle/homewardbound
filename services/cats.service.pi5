@@ -1,0 +1,22 @@
+# place in /etc/systemd/system/cats.service
+# sudo systemctl daemon-reload
+# sudo systemctl start cats
+# sudo systemctl enable cats
+
+[Unit]
+Description=HomewardBound Cats Service
+After=network.target
+
+[Service]
+User=tim
+Group=tim
+#Group=www-data
+# The directory where your pyproject.toml and code live
+WorkingDirectory=/home/tim/projects/homewardbound/hbcats
+Environment="PATH=/home/tim/.local/bin:/usr/bin:/usr/local/bin"
+EnvironmentFile=/home/tim/projects/homewardbound/.env
+ExecStart=/home/tim/.local/bin/uv run gunicorn --workers 2 --threads 4 --worker-class gthread --preload --timeout 120 --max-requests 100 --bind 0.0.0.0:8000 hbcats.wsgi:application
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
