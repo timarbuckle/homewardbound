@@ -65,6 +65,9 @@ sudo apt-get update && sudo apt-get install cloudflared
 
 Finish configuring on Cloudflare Dashboard
 
+HINT: The DNS record has to point to <TUNNEL-ID>.cfargotunnel.com
+That was the tricky thing to get right, adding .cfargotunnel.com
+
 ### Setup CRON job
 ```bash
 crontab -e
