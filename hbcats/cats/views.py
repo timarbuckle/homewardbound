@@ -154,8 +154,22 @@ def report_view(request):
         Q(status=CatStatus.AVAILABLE) |
         Q(status=CatStatus.NEW)
         ).order_by("-birthday", "name")
+
+    processed_list = []
+    previous_year = None
+    for cat in cats:
+        if cat.birthday is None:
+            processed_list.append(cat)
+            continue
+
+        current_year = cat.age.years
+        if previous_year is not None and current_year != previous_year:
+            processed_list.append(None)
+        processed_list.append(cat)
+        previous_year = current_year
+
     context = {
-        "cats": cats,
+        "cats": processed_list,
     }
     return render(request, "cats/report.html", context)
 

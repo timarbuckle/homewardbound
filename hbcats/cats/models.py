@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+from dataclasses import dataclass
+
 import httpx
 import logging
 from typing import cast
@@ -18,6 +20,16 @@ class CatStatus(models.TextChoices):
     ADOPTED = "adopted", "Adopted"
     PENDING = "pending", "Pending"
     NEW = "new", "New"
+
+@dataclass
+class YearsMonths:
+    years: int
+    months: int
+
+    def __str__(self):
+        if self.years < 1:
+            return f"{self.months}mo"
+        return f"{self.years}y{self.months}mo"
 
 class ItemQuerySet(models.QuerySet):
     def recent(self):
@@ -56,9 +68,7 @@ class Cat(models.Model):
         diff = today - cast(date, self.birthday)
         years = diff.days // 365
         months = (diff.days % 365) // 30
-        if years < 1:
-            return f"{months}mo"
-        return f"{years}y{months}mo"
+        return YearsMonths(years=years, months=months)
 
     @property
     def clean_breed(self):
@@ -83,16 +93,16 @@ def download_image_on_save(sender, instance, created, **kwargs):
             with httpx.Client(follow_redirects=True) as client:
                 response = client.get(instance.image_url, timeout=10.0)
                 response.raise_for_status()
-                
+
                 # Extract filename
                 file_name = instance.image_url.split("/")[-1]
-                
+
                 # We use .save(save=False) inside a signal to avoid infinite loops
                 instance.image.save(file_name, ContentFile(response.content), save=False)
-                
+
                 # Update only the image field to finalize
                 instance.save(update_fields=['image'])
-                
+
         except Exception as e:
             # In a production app, you might want to log this to a file
             logger.error(f"Failed to auto-download image for {instance.name}: {e}")

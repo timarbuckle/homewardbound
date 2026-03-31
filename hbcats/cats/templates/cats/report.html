@@ -5,30 +5,30 @@
 <h1 class="text-2xl font-bold mb-4">Available Cats</h1>
 
 <table class="w-full text-left border-collapse" id="report-table" media="all">
-    <thead class="bg-slate-50 border-b border-slate-200">
-        <tr>
-            <th class="column-header">
-                <a> Cat </a>
-            </th>
-            <th class="column-header">
-                <a> Age </a>
-            </th>
-            <th class="column-header">
-                <a> Sex </a>
-            </th>
-            <th class="column-header">
-                <a> Location </a>
-            </th>
-            <th class="column-header">
-                <a> Intake Date </a>
-            </th>
-            <th class="column-header">
-                <a> Breed </a>
-            </th>
-            <th class="column-header">
-                <a> Primary Color </a>
-            </th>
-            <!--
+  <thead class="bg-slate-50 border-b border-slate-200">
+    <tr>
+      <th class="column-header">
+        <a> Cat </a>
+      </th>
+      <th class="column-header">
+        <a> Age </a>
+      </th>
+      <th class="column-header">
+        <a> Sex </a>
+      </th>
+      <th class="column-header">
+        <a> Location </a>
+      </th>
+      <th class="column-header">
+        <a> Intake Date </a>
+      </th>
+      <th class="column-header">
+        <a> Breed </a>
+      </th>
+      <th class="column-header">
+        <a> Primary Color </a>
+      </th>
+      <!--
             <th class="p-4 font-semibold text-slate-700">
                 <a>
                     First Seen
@@ -45,44 +45,46 @@
                 </a>
             </th>
             -->
-        </tr>
-    </thead>
-    <tbody id="report-body" class="divide-y divide-slate-100">
-        {% for cat in cats %}
-        <tr>
-            <td class="font-bold">
-                {{ cat.name }}
-            </td>
-            <td>{{ cat.age }}</td>
-            <td>{{ cat.sex }}</td>
-            <td>
-                {{ cat.location }}
-            </td>
-            <td>
-                {{ cat.intake_date|date:"M d, Y" }}
-            </td>
-            <td >{{ cat.clean_breed }}</td>
-            <td >{{ cat.primary_color }}</td>
-            <!--
-            <td class="p-4 text-slate-600 text-sm">
-                {{ cat.first_seen|date:"M d, Y" }}
-            </td>
-            <td class="p-4 text-slate-600 text-sm">
-                {{ cat.last_seen|date:"M d, Y" }}
-            </td>
-            <td class="p-4 text-slate-600 text-sm italic">
-                {{ cat.last_updated|timesince }} ago
-            </td>
-            -->
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="11" class="p-8 text-center text-slate-400">
-                No cats found in this category.
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+    </tr>
+  </thead>
+  <tbody id="report-body" class="divide-y divide-slate-100">
+    {% for cat in cats %} {% if cat is None %}
+    <tr class="bg-slate-50">
+      <td colspan="11" class="py-2 px-2">
+        <div class="border-t border-slate-300 w-full my-2" />
+      </td>
+    </tr>
+    {% else %}
+    <tr class="hover:bg-slate-50 text-xs whitespace-nowrap">
+      <td class="py-0.5 px-2 font-bold text-slate-800">{{ cat.name }}</td>
+      <td class="py-0.5 px-2 text-slate-600">{{ cat.age }}</td>
+      <td class="py-0.5 px-2 text-slate-600">{{ cat.sex }}</td>
+      <td class="py-0.5 px-2 text-slate-600">{{ cat.location }}</td>
+      <td class="py-0.5 px-2 text-slate-600">
+        {{ cat.intake_date|date:"M d, Y" }}
+      </td>
+      <td class="py-0.5 px-2 text-slate-600">{{ cat.clean_breed }}</td>
+      <td class="py-0.5 px-2 text-slate-600">{{ cat.primary_color }}</td>
+      <!--
+                <td class="p-4 text-slate-600 text-sm">
+                    {{ cat.first_seen|date:"M d, Y" }}
+                </td>
+                <td class="p-4 text-slate-600 text-sm">
+                    {{ cat.last_seen|date:"M d, Y" }}
+                </td>
+                <td class="p-4 text-slate-600 text-sm italic">
+                    {{ cat.last_updated|timesince }} ago
+                </td>
+                -->
+    </tr>
+    {% endif %} {% empty %}
+    <tr>
+      <td colspan="11" class="p-8 text-center text-slate-400">
+        No cats found in this category.
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
 {% endblock %}
