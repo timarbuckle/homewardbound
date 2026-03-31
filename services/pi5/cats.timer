@@ -1,8 +1,8 @@
 [Unit]
-Description=Run cats update script daily at 8am, 12pm, 6pm PST
+Description=Run cats update script daily at 8am, 12pm, 3pm, 6pm PST
 
 [Timer]
-OnCalendar=PST 08,12,15,18:00:00
+OnCalendar=*-*-* 08,12,15,18:00:00 America/Los_Angeles
 # Ensure it runs even if the computer was off during the scheduled time
 Persistent=true
 
