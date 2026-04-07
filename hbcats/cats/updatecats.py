@@ -32,13 +32,11 @@ class UpdateCats:
     def __init__(self):
         self.driver = None
 
-    def update_cats(self):
-        datetime_now = timezone.now()
-        logger.info(f"{datetime_now}: Updating cats ...")
-        # reset status of all NEW cats to AVAILABLE
-        Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
+    def get_driver(self, system):
+        options = None
+        driver = None
 
-        if platform.system() == "Darwin":
+        if system == "Darwin":
             # options.binary_location = "/usr/local/bin/chromedriver"
             # options.binary_location = "/opt/homebrew/bin/chromium"
             options = SafariOptions()
@@ -46,7 +44,7 @@ class UpdateCats:
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             driver = webdriver.Safari(options=options)
-        elif platform.system() == "Linux":
+        elif system == "Linux":
             # options = wedriver.get_default_chrome_options()
             options = ChromeOptions()
             options.add_argument("--headless")  # Run without a GUI
@@ -77,6 +75,16 @@ class UpdateCats:
             options.add_argument("--disable-dev-shm-usage")
             driver = webdriver.Chrome(options=options)
 
+        return driver
+
+    def update_cats(self):
+        datetime_now = timezone.now()
+        logger.info(f"{datetime_now}: Updating cats ...")
+        # reset status of all NEW cats to AVAILABLE
+        Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
+
+        # get web driver
+        driver = self.get_driver(platform.system())
         try:
             driver.implicitly_wait(0.5)
             driver.get(self.ALL_CATS_URL)
