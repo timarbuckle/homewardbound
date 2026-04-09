@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET  #, require_http_methods
 from django.http import HttpResponse, JsonResponse
 
-from .models import Cat, CatStatus
+from .models import Cat, CatStatus, UpdateLog
 
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
@@ -215,3 +215,13 @@ def stats_api_view(request):
         "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
     }
     return JsonResponse(data)
+
+
+@require_GET
+def update_log_list_view(request):
+    logs = UpdateLog.objects.all().order_by("-last_updated")[:12]
+
+    context = {
+        "logs": logs,
+    }
+    return render(request, "cats/update_log_dashboard.html", context)

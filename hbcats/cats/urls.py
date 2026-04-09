@@ -13,4 +13,5 @@ urlpatterns = [
     path("api/stats/", views.stats_api_view, name="stats_api"),
     path("stats/", views.update_stats_view, name="update_stats"),
     path("report/", views.report_view, name="report"),
+    path("logs/", views.update_log_list_view, name="update_log_list"),
 ]
