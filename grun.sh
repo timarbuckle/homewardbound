@@ -7,7 +7,7 @@ uv run gunicorn hbcats.wsgi:application \
   --workers 2 \
   --threads 4 \
   --worker-class gthread \
-  --preload \
+  \
   --timeout 120 \
   --max-requests 100 \
-  --bind 0.0.0.0:8000
+  --bind 0.0.0.0:8000 #  --preload \

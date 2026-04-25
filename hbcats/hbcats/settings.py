@@ -10,14 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import logfire
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-#import google.cloud.logging
-#from google.cloud.logging.handlers import CloudLoggingHandler
+# import google.cloud.logging
+# from google.cloud.logging.handlers import CloudLoggingHandler
 
-#client = google.cloud.logging.Client()
-#handler = CloudLoggingHandler(client)
+# client = google.cloud.logging.Client()
+# handler = CloudLoggingHandler(client)
 
 load_dotenv()
 
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # "logfire.integrations_django.LogfireMiddleware",
     "cats.middleware.MediaCacheMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -154,7 +156,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False, # Good practice to keep this False
+    "disable_existing_loggers": False,  # Good practice to keep this False
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {message}",
@@ -166,22 +168,28 @@ LOGGING = {
             "level": "INFO",
             "class": "logging.FileHandler",
             "filename": os.getenv("LOG_FILE", "django.log"),
-            "formatter": "verbose", # Highly recommended for file logs
+            "formatter": "verbose",  # Highly recommended for file logs
+        },
+        "logfire": {
+            "class": "logfire.LogfireLoggingHandler",
         },
     },
-    "loggers": {
-        # This is the "Catch-all" root logger
-        "": {
-            "handlers": ["file"],
-            "level": "INFO",
-        },
-        # You can keep this if you want specific control over Django's own logs
-        "django": {
-            "handlers": ["file"],
-            "level": "INFO",
-            "propagate": False,
-        },
+    "root": {
+        "handlers": ["logfire"],
     },
+    # "loggers": {
+    # This is the "Catch-all" root logger
+    #    "": {
+    #        "handlers": ["file"],
+    #        "level": "INFO",
+    #    },
+    # You can keep this if you want specific control over Django's own logs
+    #    "django": {
+    #        "handlers": ["file"],
+    #        "level": "INFO",
+    #        "propagate": False,
+    #    },
+    # },
 }
 
 
@@ -222,3 +230,8 @@ STORAGES = {
 # GS_LOCATION = "media"
 # This makes the ImageField.url property point to GCS
 # GS_QUERYSTRING_AUTH = False  # Set to True if the bucket is private/signed URLs
+
+
+# must be at end of settings file
+logfire.configure()
+logfire.instrument_django()
