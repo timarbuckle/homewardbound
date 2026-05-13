@@ -1,0 +1,13 @@
+TODO
+====
+
+1. Migrate database from pi5 to gcp **DONE
+2. Move secrets to gcp secrets  **DONE
+3. Hook up cats.timarbuckle.com to cloud run instance  **DONE
+4. Add cloud run job to do selenium tasks to update database  **DONE
+5. Investigate monitoring, logging, etc  **LOGGING works
+6. Take down pi5 instance
+7. Stop using Tailwind CDN, source locally
+
+Cloud Run Service URL
+https://hbcats-web-32514012237.us-west1.run.app/

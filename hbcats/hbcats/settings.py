@@ -15,11 +15,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 #import google.cloud.logging
 #from google.cloud.logging.handlers import CloudLoggingHandler
-
 #client = google.cloud.logging.Client()
 #handler = CloudLoggingHandler(client)
 
-load_dotenv()
+# K_SERVICE is automatically set by Cloud Run
+# if running on cloud run, environment variables are provided by cloud secrets
+if not os.environ.get("K_SERVICE"):
+    load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -151,38 +153,60 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False, # Good practice to keep this False
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
-            "style": "{",
+# Only use console logging in production/Cloud Run
+if os.environ.get("K_SERVICE"):  # K_SERVICE is automatically set by Cloud Run
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
         },
-    },
-    "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": os.getenv("LOG_FILE", "django.log"),
-            "formatter": "verbose", # Highly recommended for file logs
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose',
+            },
         },
-    },
-    "loggers": {
-        # This is the "Catch-all" root logger
-        "": {
-            "handlers": ["file"],
-            "level": "INFO",
+        'root': {
+            'handlers': ['console'],
+            'level': 'INFO',
         },
-        # You can keep this if you want specific control over Django's own logs
-        "django": {
-            "handlers": ["file"],
-            "level": "INFO",
-            "propagate": False,
+    }
+else:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False, # Good practice to keep this False
+        "formatters": {
+            "verbose": {
+                "format": "{levelname} {asctime} {module} {message}",
+                "style": "{",
+            },
         },
-    },
-}
+        "handlers": {
+            "file": {
+                "level": "INFO",
+                "class": "logging.FileHandler",
+                "filename": os.getenv("LOG_FILE", "django.log"),
+                "formatter": "verbose", # Highly recommended for file logs
+            },
+        },
+        "loggers": {
+            # This is the "Catch-all" root logger
+            "": {
+                "handlers": ["file"],
+                "level": "INFO",
+            },
+            # You can keep this if you want specific control over Django's own logs
+            "django": {
+                "handlers": ["file"],
+                "level": "INFO",
+                "propagate": False,
+            },
+        },
+    }
 
 
 LOCKDOWN_PASSWORDS = (os.getenv("LOCKDOWN_PASSWORD"),)

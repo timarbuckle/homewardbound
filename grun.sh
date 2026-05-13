@@ -2,6 +2,7 @@
 #export DJANGO_SETTINGS_MODULE=hbcats.hbcats.settings
 #export PYTHONPATH=$(pwd)
 
+# run django app using uv
 uv run gunicorn hbcats.wsgi:application \
   --chdir hbcats \
   --workers 2 \
