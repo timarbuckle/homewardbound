@@ -110,3 +110,15 @@ To stop, disable and stop both cats.service and cats.timer.
 
 I am using this to prevent others from accessing the site.
 [django-lockdown on PyPi](https://pypi.org/project/django-lockdown/)
+
+
+# GOOGLE CLOUD RUN
+
+The app is now running on google cloud run and should be in the free tier.
+
+Build and deploy via
+
+    ./gcbuild.sh && ./gcdeploy.sh
+
+Use gcschedule.sh to revise the update schedule.
+

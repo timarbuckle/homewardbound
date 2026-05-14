@@ -105,6 +105,16 @@
     </nav>
 
     <main>{% block content %} {% endblock %}</main>
+    <footer class="bg-white border-t border-gray-200 py-8">
+      <div class="max-container mx-auto px-4 text-center">
+        <p class="text-gray-500 text-sm">
+          &copy; 2026 hbcats service. All rights reserved.
+        </p>
+        <div class="mt-2 text-xs font-mono text-gray-400">
+          Build: <span class="bg-gray-100 px-2 py-1 rounded">{{ GCP_VERSION }}</span>
+        </div>
+      </div>
+    </footer>
 
     <script>
       // Toggle logic for the mobile menu

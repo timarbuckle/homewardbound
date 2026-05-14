@@ -7,6 +7,7 @@ if [[  "$1" == "full" ]]; then
     --image us-west1-docker.pkg.dev/tim1-399820/cloud-run-images/hbcats-app:latest \
     --region us-west1 \
     --memory 2Gi \
+    --set-env-vars=GCP_VERSION=$K_REVISION \
     --allow-unauthenticated \
     --set-secrets="DEBUG=DEBUG:latest,\
     LOCKDOWN_PASSWORD=LOCKDOWN_PASSWORD:latest,\
@@ -42,6 +43,6 @@ else
     --region us-west1 \
     --cpu-throttling \
     --min-instances 0 \
+    --set-env-vars=GCP_VERSION=$K_REVISION \
     --cpu-boost
 fi
-

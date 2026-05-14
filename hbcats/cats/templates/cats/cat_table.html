@@ -153,7 +153,7 @@
                                     {% if cat.image %}
                                         src="{{ cat.image.url }}"
                                     {% else %}
-                                        src="{% static 'cats/cat_avatar.jpeg' %}"
+                                        src="https://storage.googleapis.com/hbcats/media/cats/cat_avatar.jpeg"
                                     {% endif %}
                                     class="w-28 h-28 rounded-xl object-cover border border-slate-200 shadow-sm"
                                     alt="{{ cat.name }}"
@@ -219,7 +219,7 @@
                                 {% if cat.image %}
                                     src="{{ cat.image.url }}"
                                 {% else %}
-                                    src="{% static 'cats/cat_avatar.jpeg' %}"
+                                    src="https://storage.googleapis.com/hbcats/media/cats/cat_avatar.jpeg"
                                 {% endif %}
                                 class="w-24 h-24 rounded-xl object-cover border border-slate-200 shadow-sm"
                                 alt="{{ cat.name }}"
