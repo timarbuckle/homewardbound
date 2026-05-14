@@ -152,8 +152,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_FILES_DIRS = [BASE_DIR / "static"]
 # STATIC_FILES_DIRS = [BASE_DIR / "cats" / "static"]
-STATIC_ROOT = BASE_DIR / "static"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -245,7 +245,13 @@ STORAGES = {
         },
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        #"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": "hbcats",
+            "location": "static",
+            "querystring_auth": False,
+        },
     },
 }
 

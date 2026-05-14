@@ -116,6 +116,10 @@ I am using this to prevent others from accessing the site.
 
 The app is now running on google cloud run and should be in the free tier.
 
+If any updates to the templates or css
+
+    ./updatecss.sh
+
 Build and deploy via
 
     ./gcbuild.sh && ./gcdeploy.sh
