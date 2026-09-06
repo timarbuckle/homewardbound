@@ -1,14 +1,17 @@
+from bs4 import BeautifulSoup
+from datetime import datetime
+from dataclasses import dataclass
+import httpx
 import json
 import logging
 import os
 import platform
-from datetime import datetime
 from time import sleep
+from typing import Final
 
-import httpx
-from bs4 import BeautifulSoup
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils import timezone
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -24,15 +27,29 @@ logger.setLevel(logging.DEBUG)
 # service = ChromeService(executable_path='/usr/local/bin/chrome-mac-arm64')
 
 
+@dataclass
+class LatestCatInfo:
+    name: str
+    image_url: str
+    image_tag: str
+    image_cy: str
+    location: str
+    birthday: datetime
+    intake_date: datetime
+    breed: str
+    primary_color: str
+    sex: str
+
+
 class UpdateCats:
-    ALL_CATS_URL = "https://www.shelterluv.com/embed/5575"
-    CAT_DETAILS_URL = "https://www.shelterluv.com/embed/animal/"
+    ALL_CATS_URL: Final[str] = "https://www.shelterluv.com/embed/5575"
+    CAT_DETAILS_URL: Final[str] = "https://www.shelterluv.com/embed/animal/"
     # "https://www.homewardboundcats.org/adopt/"
 
     def __init__(self):
-        self.driver = None
+        self.driver: webdriver.Chrome | webdriver.Safari | None = None
 
-    def get_driver(self, system):
+    def get_driver(self, system: str) -> webdriver.Chrome | webdriver.Safari:
         options = None
         driver = None
 
@@ -77,11 +94,9 @@ class UpdateCats:
 
         return driver
 
-    def update_cats(self):
-        datetime_now = timezone.now()
-        logger.info(f"{datetime_now}: Updating cats ...")
-        # reset status of all NEW cats to AVAILABLE
-        Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
+    def get_latest_animal_details(self):
+        # return value
+        latest_kats: list[LatestCatInfo] = []
 
         # get web driver
         driver = self.get_driver(platform.system())
@@ -106,7 +121,6 @@ class UpdateCats:
                 # Update the height for the next iteration
                 last_height = new_height
 
-
             # 1. initialize Beautiful Soup
             soup = BeautifulSoup(driver.page_source, "html.parser")
             # 2. find all the individual item containers
@@ -114,61 +128,52 @@ class UpdateCats:
             # Since class names can be long and change, we can target the anchor tag
             # or the inner div if that's more stable. Let's target the inner div:
             item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
-            new_cat_count = 0
-            total_cats = 0
+            if not item_containers:
+                logger.warning("No item containers found")
+                return
+
             # 3. loop through each container and extract the data
             for container in item_containers:
-                total_cats += 1
                 # 3a. Extract the Image URL
                 # The image is inside the <img> tag
-                image_tag = container.find("img")
-                image_url = image_tag.get("src") if image_tag else "N/A"
-                image_cy = image_tag.get("data-cy") if image_tag else "N/A"
+                cat_image_tag = container.find("img")
+                cat_image_url = cat_image_tag.get("src") if cat_image_tag else "N/A"
+                cat_image_cy = cat_image_tag.get("data-cy") if cat_image_tag else "N/A"
                 # 3b. Extract the Name
                 # The name is inside the <div> tag right after the image
                 name_div = container.find("div", class_="text-center text-gray-500 mt-2")
                 # Use get_text(strip=True) to grab the text and remove whitespace
-                name = name_div.get_text(strip=True) if name_div else "N/A"
+                cat_name = name_div.get_text(strip=True) if name_div else "N/A"
 
-                # Store the results
-                obj = Cat.objects.filter(image_cy=image_cy).first()
-                if obj:
-                    obj.last_seen = datetime_now
-                    # handle if cat was adopted and is now back
-                    if obj.status == CatStatus.ADOPTED:
-                        new_cat_count += 1
-                        obj.status = CatStatus.NEW
-                    obj.save()
-                else:
-                    new_cat_count += 1
+                cat_details_url = self.get_animal_info_url(cat_image_cy)
+                cat_details = self.get_animal_details(cat_details_url)
+                cat_location = cat_details.get("location", "N/A"),
 
-                    cat_details_url = self.get_animal_info_url(image_cy)
-                    cat_details = self.get_animal_details(cat_details_url)
+                cat_birthday_raw = cat_details.get("birthday") or "0"
+                cat_birthday = timezone.make_aware(
+                    datetime.fromtimestamp(int(cat_birthday_raw))
+                )
+                cat_intake_date_raw = cat_details.get("intake_date") or "0"
+                cat_intake_date = timezone.make_aware(
+                    datetime.fromtimestamp(int(cat_intake_date_raw))
+                )
+                cat_breed=cat_details.get("breed", "N/A"),
+                cat_primary_color=cat_details.get("primary_color", "N/A"),
+                cat_sex=cat_details.get("sex", "N/A"),
 
-                    cat_birthday_raw = cat_details.get("birthday") or "0"
-                    cat_birthday = timezone.make_aware(
-                        datetime.fromtimestamp(int(cat_birthday_raw))
-                    )
-                    cat_intake_date_raw = cat_details.get("intake_date") or "0"
-                    cat_intake_date = timezone.make_aware(
-                        datetime.fromtimestamp(int(cat_intake_date_raw))
-                    )
-
-                    Cat.objects.create(
-                        name=name,
-                        sex=cat_details.get("sex", "N/A"),
-                        location=cat_details.get("location", "N/A"),
-                        birthday=cat_birthday,
-                        breed=cat_details.get("breed", "N/A"),
-                        primary_color=cat_details.get("primary_color", "N/A"),
-                        intake_date=cat_intake_date,
-                        image_url=image_url,
-                        image_cy=image_cy,
-                        first_seen=datetime_now,
-                        last_seen=datetime_now,
-                        status=CatStatus.NEW,
-                    )
-                    logger.info(f"New cat added: {name}")
+                # 3c. Store the results
+                latest_kats.append(LatestCatInfo(
+                    name=cat_name,
+                    image_url=cat_image_url,
+                    image_tag=cat_image_tag,
+                    image_cy=cat_image_cy,
+                    location=cat_location,
+                    birthday=cat_birthday,
+                    intake_date=cat_intake_date,
+                    breed=cat_breed,
+                    primary_color=cat_primary_color,
+                    sex=cat_sex,
+                ))
         except WebDriverException as e:
             # this catches browser-specific errors (crash, timeout, etc.)
             logger.error(f"Selenium Error: {str(e)}", exc_info=True)
@@ -180,9 +185,50 @@ class UpdateCats:
                 try:
                     driver.quit() # important
                 except:
+                    logger.warning("Failed to quit driver", exc_info=True)
                     pass # already closed or crashed
 
+        return latest_kats
+
+    def update_cats(self):
+        latest_kats = self.get_latest_animal_details()
+        datetime_now = timezone.now()
+        logger.info(f"{datetime_now}: Updating cats ...")
+        # reset status of all NEW cats to AVAILABLE
+        Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
+        new_cat_count = 0
+        total_cats = 0
+        for kat in latest_kats:
+                # Store the results
+                obj = Cat.objects.filter(image_cy=kat.image_cy).first()
+                if obj:
+                    obj.last_seen = datetime_now
+                    # handle if cat was adopted and is now back
+                    if obj.status == CatStatus.ADOPTED:
+                        new_cat_count += 1
+                        obj.status = CatStatus.NEW
+                    obj.save()
+                else:
+                    new_cat_count += 1
+
+                    Cat.objects.create(
+                        name=kat.name,
+                        sex=cat_details.get("sex", "N/A"),
+                        location=kat.location,
+                        birthday=kat.birthday,
+                        breed=kat.breed,
+                        primary_color=kat.primary_color,
+                        intake_date=kat.intake_date,
+                        image_url=kat.image_url,
+                        image_cy=kat.image_cy,
+                        first_seen=datetime_now,
+                        last_seen=datetime_now,
+                        status=CatStatus.NEW,
+                    )
+                    logger.info(f"New cat added: {name}")
+
         # calculate number of cats adopted, cats not seen today and not marked as adopted
+        # TODO: THIS LOOKS WRONG
         adopted = Cat.objects.filter(
             ~Q(status=CatStatus.ADOPTED), last_seen__lt=datetime_now
         )
@@ -200,7 +246,7 @@ class UpdateCats:
             last_updated=datetime_now,
         )
         return {
-            "Total": len(item_containers),
+            "Total": len(latest_kats),
             "New": new_cat_count,
             "Adopted": adopted.count(),
         }
@@ -227,7 +273,7 @@ class UpdateCats:
             return {}
 
     def update_all_cat_details(self):
-        cats = Cat.objects.all()
+        cats: QuerySet[Cat] = Cat.objects.all()
         for cat in cats:
             cat_details_url = self.get_animal_info_url(cat.image_cy)
             logger.info(f"Requesting details for cat {cat.name}")

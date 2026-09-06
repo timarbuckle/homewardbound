@@ -67,18 +67,15 @@
             <a
               href="/"
               class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
-              >Dashboard</a
-            >
+            >Dashboard</a>
             <a
               href="{% url 'report' %}"
               class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
-              >Report</a
-            >
+            >Report</a>
             <a
               href="{% url 'update_log_list' %}"
               class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
-              >Update Logs</a
-            >
+            >Update Logs</a>
             <!--
               <a href="#" class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50">Settings</a>
             -->
@@ -105,16 +102,14 @@
     </nav>
 
     <main>{% block content %} {% endblock %}</main>
-    <footer class="bg-white border-t border-gray-200 py-8">
-      <div class="max-container mx-auto px-4 text-center">
-        <p class="text-gray-500 text-sm">
-          &copy; 2026 hbcats service. All rights reserved.
-        </p>
-        <div class="mt-2 text-xs font-mono text-gray-400">
-          Build: <span class="bg-gray-100 px-2 py-1 rounded">{{ GCP_VERSION }}</span>
+    <footer class="mt-auto border-t border-slate-200 bg-white py-3 print:hidden">
+        <div class="max-w-6xl mx-auto px-6 text-center text-xs text-slate-500 flex flex-wrap justify-center items-center gap-2">
+            <span>&copy; 2026 hbcats service. All rights reserved.</span>
+            <span class="hidden sm:inline text-slate-300">&bull;</span>
+            <span>Version 1.0.2 Sept 2026</span>
+            <span class="hidden sm:inline text-slate-300">&bull;</span>
+            <span class="bg-gray-100 px-2 py-1 rounded">Build: {{ GCP_VERSION }}</span>
         </div>
-      </div>
     </footer>
-
   </body>
 </html>

@@ -219,7 +219,7 @@ def stats_api_view(request):
 
 @require_GET
 def update_log_list_view(request):
-    logs = UpdateLog.objects.all().order_by("-last_updated")[:12]
+    logs = UpdateLog.objects.all().order_by("-last_updated")[:24]
 
     context = {
         "logs": logs,
