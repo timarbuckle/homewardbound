@@ -148,15 +148,16 @@
                 <tr class="hover:bg-slate-50 transition">
                     <td class="p-4 md:hidden">
                         <div class="flex items-start gap-4">
-                            <div class="w-28 text-center flex-shrink-0">
+                            <div class="w-28 text-center shrink-0">
                                 <img
                                     {% if cat.image %}
                                         src="{{ cat.image.url }}"
                                     {% else %}
                                         src="https://storage.googleapis.com/hbcats/media/cats/cat_avatar.jpeg"
                                     {% endif %}
-                                    class="w-28 h-28 rounded-xl object-cover border border-slate-200 shadow-sm"
+                                    class="w-28 h-28 rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
                                     alt="{{ cat.name }}"
+                                    onclick="openImageModal(this.src, '{{ cat.name|escapejs }}')"
                                 />
                                 <span
                                     class="font-bold text-lg text-slate-900 mt-2"
@@ -221,8 +222,9 @@
                                 {% else %}
                                     src="https://storage.googleapis.com/hbcats/media/cats/cat_avatar.jpeg"
                                 {% endif %}
-                                class="w-24 h-24 rounded-xl object-cover border border-slate-200 shadow-sm"
+                                class="w-24 h-24 rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
                                 alt="{{ cat.name }}"
+                                onclick="openImageModal(this.src, '{{ cat.name|escapejs }}')"
                             />
                             <div>
                                 <span class="font-bold text-lg text-slate-900"

@@ -6,8 +6,11 @@ TODO
 3. Hook up cats.timarbuckle.com to cloud run instance  **DONE
 4. Add cloud run job to do selenium tasks to update database  **DONE
 5. Investigate monitoring, logging, etc  **LOGGING works
-6. Take down pi5 instance
+6. Take down pi5 instance **DONE
 7. Stop using Tailwind CDN, source locally
+8. Click cat shows modal large view of image
+9. Fix: /app/.venv/lib/python3.14/site-packages/django/core/handlers/base.py:61: UserWarning: No directory at: /app/hbcats/static/
+10. add handler for /*/wp-includes/wlmanifest.xml
 
 Cloud Run Service URL
 https://hbcats-web-32514012237.us-west1.run.app/

@@ -21,7 +21,8 @@ if [[  "$1" == "full" ]]; then
     CHROMEDRIVER_PATH=CHROMEDRIVER_PATH:latest,\
     CHROMEBROWSER_PATH=CHROMEBROWSER_PATH:latest" \
     --cpu-throttling \
-    --min-instances 0 \
+    --min-instances=0 \
+    --max-instances=2 \
     --cpu-boost
   #  --set-env-vars=DEBUG=False \
   #  --set-env-vars=LOCKDOWN_PASSWORD="kitcat" \
@@ -41,8 +42,9 @@ else
   gcloud run deploy hbcats-web \
     --source . \
     --region us-west1 \
-    --cpu-throttling \
-    --min-instances 0 \
     --set-env-vars=GCP_VERSION=$K_REVISION \
+    --cpu-throttling \
+    --min-instances=0 \
+    --max-instances=2 \
     --cpu-boost
 fi
