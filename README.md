@@ -122,7 +122,8 @@ If any updates to the templates or css
 
 Build and deploy via
 
-    ~./gcbuild.sh && ./gcdeploy.sh~
+ ~was ./gcbuild.sh && ./gcdeploy.sh~
+
     ./gcdeploy.sh
 
 Use gcschedule.sh to revise the update schedule.
