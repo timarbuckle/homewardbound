@@ -213,7 +213,7 @@ class UpdateCats:
 
                     Cat.objects.create(
                         name=kat.name,
-                        sex=cat_details.get("sex", "N/A"),
+                        sex=kat.sex,
                         location=kat.location,
                         birthday=kat.birthday,
                         breed=kat.breed,
