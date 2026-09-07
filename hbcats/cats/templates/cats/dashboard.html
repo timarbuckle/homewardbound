@@ -65,12 +65,19 @@
             </button>
         </div>
     </div>
-
+    <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <!-- Moved data-url INSIDE the div tag -->
+        <div id="cat-table" data-url="{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc">
+            {% include 'cats/cat_table.html' %}
+        </div>
+    </div>
+    <!--
     <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div id="cat-table">{% include 'cats/cat_table.html' %}
         data-url="{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc">
         </div>
     </div>
+    -->
 </div>
 
 <!-- Full Screen Image Modal -->

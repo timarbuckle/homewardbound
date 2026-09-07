@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Image Modal Functions
-function openImageModal(src, name) {
+window.openImageModal = function(src, name) {
     const modal = document.getElementById('image-modal');
     const img = document.getElementById('modal-image');
 
@@ -24,7 +24,7 @@ function openImageModal(src, name) {
     document.body.style.overflow = 'hidden';
 }
 
-function closeImageModal() {
+window.closeImageModal = function() {
     const modal = document.getElementById('image-modal');
     modal.classList.add('opacity-0');
 
