@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET  #, require_http_methods
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, JsonResponse
 
 from .models import Cat, CatStatus, UpdateLog
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 valid_statuses = [CatStatus.AVAILABLE, CatStatus.NEW]
 
+@ensure_csrf_cookie
 def cat_list_view(request):
     filter_type = request.GET.get("filter", "all")
     sort = request.GET.get("sort", "name")  # Default sorting by name
@@ -139,16 +141,6 @@ def update_all_cats_latest_details():
     logger.info("completed update_all_cat_details")
     return
 
-@require_POST
-def update_stats_view(request):
-    context = {
-        "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
-        "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
-        "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
-    }
-    return render(request, "cats/stats_bar.html", context)
-
-
 def report_view(request):
     cats = Cat.objects.filter(
         Q(status=CatStatus.AVAILABLE) |
@@ -203,8 +195,7 @@ def new_cats_api_view(request):
     }
     return JsonResponse(data)
 
-@require_GET
-def stats_api_view(request):
+def stats_api():
     time_threshold = timezone.now() - timedelta(hours=24)
     data= {
         "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
@@ -214,13 +205,26 @@ def stats_api_view(request):
             ).count(),
         "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
     }
-    return JsonResponse(data)
+    return data
+
+@require_GET
+def stats_api_view(request):
+    return JsonResponse(stats_api())
+
+@require_POST
+def update_stats_view(request):
+    #context = {
+    #    "total_cats": Cat.objects.filter(status__in=valid_statuses).count(),
+    #    "new_cats": Cat.objects.filter(status=CatStatus.NEW).count(),
+    #    "adopted_cats": Cat.objects.recent().filter(status=CatStatus.ADOPTED).count(),
+    #}
+    return render(request, "cats/stats_bar.html", stats_api())
 
 
+@ensure_csrf_cookie
 @require_GET
 def update_log_list_view(request):
     logs = UpdateLog.objects.all().order_by("-last_updated")[:24]
-
     context = {
         "logs": logs,
     }

@@ -83,17 +83,26 @@
           <!--
           <div class="border-t border-slate-100 pt-4 flex flex-col gap-2 px-3">
               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Actions</p>
-              <button hx-post="{% url 'update_stats' %}" hx-target="#stats-display"
-                      class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
-                  <span class="mr-2">↻</span> Update Stats
+              <button
+                hx-post="{% url 'update_stats' %}"
+                hx-target="#stats-display"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
+                <span class="mr-2">↻</span> Update Stats
               </button>
-              <button hx-post="{% url 'update_all_cats' %}" hx-target="#stats-display"
-                      class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
-                  <span class="mr-2">↻</span> Update All Info
+              <button
+                hx-post="{% url 'update_all_cats' %}"
+                hx-target="#stats-display"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
+                <span class="mr-2">↻</span> Update All Info
               </button>
-              <button hx-post="{% url 'update_cats' %}" hx-target="#stats-display"
-                      class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
-                  <span class="mr-2">↻</span> Update Current
+              <button
+                hx-post="{% url 'update_cats' %}"
+                hx-target="#stats-display"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
+                <span class="mr-2">↻</span> Update Current
               </button>
           </div>
           -->
