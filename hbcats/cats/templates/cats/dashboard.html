@@ -1,95 +1,71 @@
-{% extends 'cats/base.html' %} {% block content %}
-{% load static %}
-<!-- Store the generated URL in a data attribute -->
-<script src="{% static 'cats/js/dashboard.js' %}" defer></script>
-<div class="max-w-6xl mx-auto p-4 md:p-6 flex flex-col items-center">
-
-    <!-- dynamic stats display
-    <div
-        id="stats-display"
-        class="w-full grid grid-cols-3 gap-2 md:gap-4 mb-6 text-center"
-        hx-post="{% url 'update_stats' %}"
-        hx-headers="&quot;X-CSRFToken&quot;: &quot;{{ csrf_token }}&quot;"
-        hx-trigger="refreshStats from:body"
-        >
-        {% include 'cats/stats_bar.html' %}
-    </div>
-    -->
-    <div
-        id="stats-display"
-        class="w-full grid grid-cols-3 gap-2 md:gap-4 mb-6 text-center"
-    >
-        <div class="bg-blue-50 p-2 rounded-lg border border-blue-100">
-            <p class="text-blue-400 text-xs uppercase font-bold">Available</p>
-            <p class="text-xl font-black text-blue-600">{{ total_cats|default:"0" }}</p>
-        </div>
-        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-            <p class="text-emerald-400 text-xs uppercase font-bold">New</p>
-            <p class="text-xl font-black text-emerald-600">{{ new_cats|default:"0" }}</p>
-        </div>
-        <div class="bg-purple-50 p-2 rounded-lg border border-purple-100">
-            <p class="text-purple-400 text-xs uppercase font-bold">Adopted</p>
-            <p class="text-xl font-black text-purple-600">{{ adopted_cats|default:"0" }}</p>
-        </div>
-    </div>
-
-    <div class="flex justify-center w-full mb-6">
-        <div class="flex bg-white p-1.5 rounded-lg shadow-sm border border-slate-200 overflow-x-auto w-fit">
-            <button
-                hx-get="{% url 'cat_list' %}?filter=all&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-                hx-target="#cat-table"
-                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
-            >
-                Available
-            </button>
-            <button
-                hx-get="{% url 'cat_list' %}?filter=new&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-                hx-target="#cat-table"
-                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
-            >
-                New Arrivals
-            </button>
-            <button
-                hx-get="{% url 'cat_list' %}?filter=adopted&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-                hx-target="#cat-table"
-                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
-            >
-                Recently Adopted
-            </button>
-            <button
-                hx-get="{% url 'cat_list' %}?filter=none&sort={{ current_sort }}&sort_order={{ current_sort_order }}"
-                hx-target="#cat-table"
-                class="px-4 py-1.5 rounded-md text-xs font-medium hover:bg-slate-100 focus:bg-indigo-100 focus:text-indigo-700 whitespace-nowrap"
-            >
-               All
-            </button>
-        </div>
-    </div>
-    <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <!-- Moved data-url INSIDE the div tag -->
-        <div id="cat-table" data-url="{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc">
-            {% include 'cats/cat_table.html' %}
-        </div>
-    </div>
-    <!--
-    <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div id="cat-table">{% include 'cats/cat_table.html' %}
-        data-url="{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc">
-        </div>
-    </div>
-    -->
+{% extends 'cats/base.html' %}
+{% block content %}
+<!-- Stats Display -->
+<!-- Added max-width and margin: 0 auto to constrain and center on desktop -->
+<div id="stats-display" style="display: flex; gap: 0.5rem; margin: 0 auto 1rem auto; max-width: 600px; text-align: center;">
+    <article style="flex: 1; padding: 0.75rem 0.25rem; margin-bottom: 0;">
+        <p style="margin: 0; font-size: 0.75rem; color: var(--pico-muted-color);">Total Cats</p>
+        <h3 style="margin: 0; font-size: 1.25rem;">{{ total_cats }}</h3>
+    </article>
+    <article style="flex: 1; padding: 0.75rem 0.25rem; margin-bottom: 0;">
+        <p style="margin: 0; font-size: 0.75rem; color: var(--pico-muted-color);">New Arrivals</p>
+        <h3 style="margin: 0; color: var(--pico-primary); font-size: 1.25rem;">{{ new_cats }}</h3>
+    </article>
+    <article style="flex: 1; padding: 0.75rem 0.25rem; margin-bottom: 0;">
+        <p style="margin: 0; font-size: 0.75rem; color: var(--pico-muted-color);">Recently Adopted</p>
+        <h3 style="margin: 0; color: #10b981; font-size: 1.25rem;">{{ adopted_cats }}</h3>
+    </article>
 </div>
 
-<!-- Full Screen Image Modal -->
-<div id="image-modal" class="fixed inset-0 z-50 hidden bg-slate-900/90 backdrop-blur-sm items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="if(event.target === this) closeImageModal()">
-    <div class="relative max-w-5xl w-full flex justify-center">
-        <!-- Close Button -->
-        <button onclick="closeImageModal()" class="absolute -top-12 right-0 md:-right-8 text-slate-300 hover:text-white text-4xl font-light transition-colors">
-            &times;
-        </button>
-        <!-- Enlarged Image -->
-        <img id="modal-image" src="" alt="Enlarged cat" class="max-h-[85vh] max-w-full rounded-lg shadow-2xl object-contain border border-slate-700/50">
-    </div>
+
+<!-- Tightly Packed Single-Row Button Group -->
+<nav style="margin-bottom: 1rem;">
+    <!-- flex-wrap: nowrap forces them to stay on one line. overflow-x: auto allows swiping if the screen is incredibly small -->
+    <ul role="group" style="display: flex; flex-wrap: nowrap; overflow-x: auto; padding-left: 0; margin-bottom: 0; width: 100%;">
+        <!-- flex: 1 makes buttons share width equally. Reduced padding to fit on mobile -->
+        <li style="flex: 1;">
+            <button class="outline" style="width: 100%; padding: 0.5rem 0.25rem; font-size: 0.75rem;" hx-get="{% url 'cat_list' %}?filter=all" hx-target="#cat-table">Available</button>
+        </li>
+        <li style="flex: 1;">
+            <button class="outline" style="width: 100%; padding: 0.5rem 0.25rem; font-size: 0.75rem;" hx-get="{% url 'cat_list' %}?filter=new" hx-target="#cat-table">New</button>
+        </li>
+        <li style="flex: 1;">
+            <button class="outline" style="width: 100%; padding: 0.5rem 0.25rem; font-size: 0.75rem;" hx-get="{% url 'cat_list' %}?filter=adopted" hx-target="#cat-table">Adopted</button>
+        </li>
+        <li style="flex: 1;">
+            <button class="outline" style="width: 100%; padding: 0.5rem 0.25rem; font-size: 0.75rem;" hx-get="{% url 'cat_list' %}?filter=none" hx-target="#cat-table">All</button>
+        </li>
+    </ul>
+</nav>
+
+<!-- Table Container -->
+<div id="cat-table">
+    {% include 'cats/cat_table.html' %}
 </div>
 
+<!-- Image Modal using native <dialog> -->
+<dialog id="image-modal">
+    <article>
+        <header>
+            <button aria-label="Close" rel="prev" onclick="document.getElementById('image-modal').close()"></button>
+            <strong id="modal-title">Image</strong>
+        </header>
+        <img id="modal-image" src="" alt="Enlarged cat" />
+    </article>
+</dialog>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const catTable = document.querySelector("#cat-table");
+        if (catTable) {
+            htmx.ajax("GET", "{% url 'cat_list' %}?filter=all&sort=name&sort_order=asc", "#cat-table");
+        }
+    });
+
+    function openImageModal(src, name) {
+        document.getElementById('modal-image').src = src;
+        document.getElementById('modal-title').innerText = name;
+        document.getElementById('image-modal').showModal(); // Native HTML5 modal API
+    }
+</script>
 {% endblock %}

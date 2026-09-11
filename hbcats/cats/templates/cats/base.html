@@ -5,120 +5,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Cat Registry{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
     <!--
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'cats/css/output.css' %}" />
     -->
     <script src="{% static 'cats/js/base.js' %}" defer></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <style>
-      .htmx-indicator {
-        display: none;
-      }
-      .htmx-request .htmx-indicator {
-        display: inline;
-      }
-      [x-cloak] {
-        display: none !important;
-      }
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline;}
+        [x-cloak] { display: none !important;}
+        /* Remove Pico's default huge margin below the main content */
+        main.container {
+            margin-bottom: 0;
+            padding-bottom: 1rem; /* Just a tiny bit of breathing room */
+        }
+        /* Center and style the footer */
+        footer {
+            margin-top: auto; /* Pushes footer to the bottom of the page */
+            text-align: center; /* Centers the text horizontally */
+            font-size: 0.85rem; /* Makes the text slightly smaller */
+            color: var(--pico-muted-color); /* Uses Pico's nice muted grey color */
+            padding: 1.5rem 0; /* Adds a little breathing room above and below */
+        }
     </style>
   </head>
-  <body class="bg-slate-50 text-slate-900 min-h-screen">
-    <nav
-      class="bg-white border-b border-slate-200 py-4 mb-6 shadow-sm print:hidden"
-    >
-      <div class="max-w-6xl mx-auto px-6">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">🐈</span>
-            <span class="font-bold text-xl tracking-tight">
-              HomewardBound Cat Registry
-            </span>
-          </div>
+  <body style="display: flex; flex-direction: column; min-height: 100vh;">
+      <!-- Pico styles <header> and <nav> automatically -->
+      <header class="container">
+          <nav>
+              <ul>
+                  <li><strong>🐈 HomewardBound</strong></li>
+              </ul>
+              <ul>
+                  <li><a href="/">Dashboard</a></li>
+                  <li><a href="{% url 'report' %}">Report</a></li>
+                  <li><a href="{% url 'update_log_list' %}">Logs</a></li>
+              </ul>
+          </nav>
+      </header>
 
-          <div>
-            <button
-              id="mobile-menu-toggle"
-              class="text-slate-500 hover:text-indigo-600 p-2"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  id="hamburger-icon"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>
-            </button>
-          </div>
-        </div>
+      <!-- Main content container -->
+      <main class="container">
+          {% block content %}{% endblock %}
+      </main>
 
-        <div
-          id="mobile-menu"
-          class="hidden mt-4 border-t border-slate-100 pt-4 pb-2 space-y-4"
-        >
-          <div class="flex flex-col space-y-2">
-            <a
-              href="/"
-              class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
-            >Dashboard</a>
-            <a
-              href="{% url 'report' %}"
-              class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
-            >Report</a>
-            <a
-              href="{% url 'update_log_list' %}"
-              class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
-            >Update Logs</a>
-            <!--
-              <a href="#" class="px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50">Settings</a>
-            -->
-          </div>
-          <!--
-          <div class="border-t border-slate-100 pt-4 flex flex-col gap-2 px-3">
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Actions</p>
-              <button
-                hx-post="{% url 'update_stats' %}"
-                hx-target="#stats-display"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
-                <span class="mr-2">↻</span> Update Stats
-              </button>
-              <button
-                hx-post="{% url 'update_all_cats' %}"
-                hx-target="#stats-display"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
-                <span class="mr-2">↻</span> Update All Info
-              </button>
-              <button
-                hx-post="{% url 'update_cats' %}"
-                hx-target="#stats-display"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                class="w-full text-left py-2 px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-md flex items-center">
-                <span class="mr-2">↻</span> Update Current
-              </button>
-          </div>
-          -->
-        </div>
-      </div>
-    </nav>
+      <!-- Restored Compact Single-Line Footer -->
+      <footer class="container-fluid">
+          &copy; 2026 HomewardBound Cat Registry &bull; Version 1.0.2 &bull; Release: {{ GCP_VERSION}}|Sept 2026
+      </footer>
 
-    <main>{% block content %} {% endblock %}</main>
-    <footer class="mt-auto border-t border-slate-200 bg-white py-3 print:hidden">
-        <div class="max-w-6xl mx-auto px-6 text-center text-xs text-slate-500 flex flex-wrap justify-center items-center gap-2">
-            <span>&copy; 2026 hbcats service. All rights reserved.</span>
-            <span class="hidden sm:inline text-slate-300">&bull;</span>
-            <span>Version 1.0.2 Sept 2026</span>
-            <span class="hidden sm:inline text-slate-300">&bull;</span>
-            <span class="bg-gray-100 px-2 py-1 rounded">Build: {{ GCP_VERSION }}</span>
-        </div>
-    </footer>
+      <script>
+          document.body.addEventListener("htmx:configRequest", (event) => {
+              event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}";
+          });
+      </script>
   </body>
 </html>

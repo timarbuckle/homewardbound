@@ -22,6 +22,7 @@ RUN uv sync --frozen
 
 # Copy the rest of your app code
 COPY . .
+COPY .env.localdocker .env
 
 # Copy and prepare the startup script
 COPY start.sh /app/start.sh

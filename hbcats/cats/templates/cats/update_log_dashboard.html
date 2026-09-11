@@ -1,14 +1,15 @@
 {% extends 'cats/base.html' %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-2 md:p-6 flex flex-col items-center">
-    <div class="w-full mb-6 flex justify-start items-center">
-        <h1 class="text-2xl font-bold text-slate-800">Update Logs</h1>
-    </div>
+<hgroup style="margin-bottom: var(--pico-spacing);">
+    <h1>Update Logs</h1>
+    <p>Recent synchronization activity</p>
+</hgroup>
 
-    <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div id="log-table">{% include 'cats/update_log_table.html' %}</div>
+<!-- Pico styles <article> as a neat card with padding and a border -->
+<article>
+    <div id="log-table">
+        {% include 'cats/update_log_table.html' %}
     </div>
-</div>
-
+</article>
 {% endblock %}

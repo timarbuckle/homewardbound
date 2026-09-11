@@ -1,12 +1,17 @@
-<div class="bg-blue-50 p-2 rounded-lg border border-blue-100">
-    <p class="text-blue-400 text-xs uppercase font-bold">Available</p>
-    <p class="text-xl font-black text-blue-600">{{ total_cats|default:"0" }}</p>
-</div>
-<div class="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-    <p class="text-emerald-400 text-xs uppercase font-bold">New</p>
-    <p class="text-xl font-black text-emerald-600">{{ new_cats|default:"0" }}</p>
-</div>
-<div class="bg-purple-50 p-2 rounded-lg border border-purple-100">
-    <p class="text-purple-400 text-xs uppercase font-bold">Adopted</p>
-    <p class="text-xl font-black text-purple-600">{{ adopted_cats|default:"0" }}</p>
-</div>
+<!-- Box 1 -->
+<article>
+    <p style="margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--pico-muted-color);">Total Cats</p>
+    <h2 style="margin-bottom: 0;">{{ total_cats }}</h2>
+</article>
+
+<!-- Box 2 -->
+<article>
+    <p style="margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--pico-muted-color);">New Arrivals</p>
+    <h2 style="margin-bottom: 0; color: var(--pico-primary);">{{ new_cats }}</h2>
+</article>
+
+<!-- Box 3 -->
+<article>
+    <p style="margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--pico-muted-color);">Recently Adopted</p>
+    <h2 style="margin-bottom: 0; color: #10b981;"><!-- Custom green for adopted -->{{ adopted_cats }}</h2>
+</article>
