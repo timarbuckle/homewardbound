@@ -144,10 +144,11 @@ class UpdateCats:
                 name_div = container.find("div", class_="text-center text-gray-500 mt-2")
                 # Use get_text(strip=True) to grab the text and remove whitespace
                 cat_name = name_div.get_text(strip=True) if name_div else "N/A"
+                logger.info(f"Name: {cat_name}")
 
                 cat_details_url = self.get_animal_info_url(cat_image_cy)
                 cat_details = self.get_animal_details(cat_details_url)
-                cat_location = cat_details.get("location", "N/A"),
+                cat_location = cat_details.get("location", "N/A")
 
                 cat_birthday_raw = cat_details.get("birthday") or "0"
                 cat_birthday = timezone.make_aware(
@@ -157,9 +158,9 @@ class UpdateCats:
                 cat_intake_date = timezone.make_aware(
                     datetime.fromtimestamp(int(cat_intake_date_raw))
                 )
-                cat_breed=cat_details.get("breed", "N/A"),
-                cat_primary_color=cat_details.get("primary_color", "N/A"),
-                cat_sex=cat_details.get("sex", "N/A"),
+                cat_breed=cat_details.get("breed", "N/A")
+                cat_primary_color=cat_details.get("primary_color", "N/A")
+                cat_sex=cat_details.get("sex", "N/A")
 
                 # 3c. Store the results
                 latest_kats.append(LatestCatInfo(
@@ -211,21 +212,31 @@ class UpdateCats:
                 else:
                     new_cat_count += 1
 
-                    Cat.objects.create(
-                        name=kat.name,
-                        sex=kat.sex,
-                        location=kat.location,
-                        birthday=kat.birthday,
-                        breed=kat.breed,
-                        primary_color=kat.primary_color,
-                        intake_date=kat.intake_date,
-                        image_url=kat.image_url,
-                        image_cy=kat.image_cy,
-                        first_seen=datetime_now,
-                        last_seen=datetime_now,
-                        status=CatStatus.NEW,
-                    )
-                    logger.info(f"New cat added: {name}")
+                    #logger.info(f"Name: {kat.name} Image: {kat.image_url} Location: {kat.location}")
+                    #logger.info(f"Breed: {kat.breed} Primary Color: {kat.primary_color} Sex: {kat.sex}")
+                    #logger.info(f"Birthday: {kat.birthday} Intake Date: {kat.intake_date}")
+                    #logger.info(f"Image Cy: {kat.image_cy}")
+
+                    logger.info(f"Creating cat: {kat.name}")
+                    try:
+                        Cat.objects.create(
+                            name=kat.name,
+                            sex=kat.sex,
+                            location=kat.location,
+                            birthday=kat.birthday,
+                            breed=kat.breed,
+                            primary_color=kat.primary_color,
+                            intake_date=kat.intake_date,
+                            image_url=kat.image_url,
+                            image_cy=kat.image_cy,
+                            first_seen=datetime_now,
+                            last_seen=datetime_now,
+                            status=CatStatus.NEW,
+                        )
+                        logger.info(f"New cat added: {kat.name}")
+                    except Exception as e:
+                        logger.error(f"Failed to create cat: {e}")
+
 
         # calculate number of cats adopted, cats not seen today and not marked as adopted
         # TODO: THIS LOOKS WRONG
@@ -235,6 +246,7 @@ class UpdateCats:
         for cat in adopted:
             cat.status = CatStatus.ADOPTED
             cat.save()
+        total_cats = Cat.objects.filter(status__in=[CatStatus.AVAILABLE, CatStatus.NEW]).count()
 
         logger.info(
             f"Total cats: {total_cats} | New cats added: {new_cat_count} | Adopted cats: {adopted.count()}"
