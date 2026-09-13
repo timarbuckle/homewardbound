@@ -22,9 +22,6 @@ from cats.models import Cat, CatStatus, UpdateLog
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.chrome.service import Service as ChromeService
-# service = ChromeService(executable_path='/usr/local/bin/chrome-mac-arm64')
 
 
 @dataclass
@@ -94,7 +91,7 @@ class UpdateCats:
 
         return driver
 
-    def get_latest_animal_details(self):
+    def get_latest_animal_details(self) -> list[LatestCatInfo]:
         # return value
         latest_kats: list[LatestCatInfo] = []
 
@@ -130,7 +127,7 @@ class UpdateCats:
             item_containers = soup.find_all("div", class_="px-2 my-4 w-1/2 md:w-56")
             if not item_containers:
                 logger.warning("No item containers found")
-                return
+                return latest_kats
 
             # 3. loop through each container and extract the data
             for container in item_containers:
@@ -177,10 +174,10 @@ class UpdateCats:
                 ))
         except WebDriverException as e:
             # this catches browser-specific errors (crash, timeout, etc.)
-            logger.error(f"Selenium Error: {str(e)}", exc_info=True)
+            logger.exception(f"Selenium Error: {str(e)}")
         except Exception as e:
             # this catches non-Selenium Python errors
-            logger.error(f"General Error: {str(e)}", exc_info=True)
+            logger.exception(f"General Error: {str(e)}")
         finally:
             if driver:
                 try:
@@ -235,7 +232,7 @@ class UpdateCats:
                         )
                         logger.info(f"New cat added: {kat.name}")
                     except Exception as e:
-                        logger.error(f"Failed to create cat: {e}")
+                        logger.exception(f"Failed to create cat: {e}")
 
 
         # calculate number of cats adopted, cats not seen today and not marked as adopted
