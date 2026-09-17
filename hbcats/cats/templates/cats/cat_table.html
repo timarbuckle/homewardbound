@@ -136,7 +136,17 @@
                     </th>
                     <th class="p-4 font-semibold text-slate-700">Sex</th>
                     <th class="p-4 font-semibold text-slate-700">Breed</th>
-                    <th class="p-4 font-semibold text-slate-700">Location</th>
+                    <th class="p-4 font-semibold text-slate-700">
+                        <a class="cursor-pointer"
+                            hx-get="?filter={{ current_filter }}&sort=location&sort_order={% if current_sort == 'location' and current_sort_order == 'asc' %}desc{% else %}asc{% endif %}"
+                            hx-target="#cat-table"
+                            hx-swap="innerHTML">
+                            Location
+                            {% if current_sort == 'location' %}
+                                {% if current_sort_order == 'asc' %}↓{% else %}↑{% endif %}
+                            {% endif %}
+                        </a>
+                    </th>
                 </tr>
             </thead>
 
