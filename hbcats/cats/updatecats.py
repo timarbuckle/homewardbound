@@ -54,8 +54,6 @@ class UpdateCats:
         driver = None
 
         if system == "Darwin":
-            # options.binary_location = "/usr/local/bin/chromedriver"
-            # options.binary_location = "/opt/homebrew/bin/chromium"
             options = SafariOptions()
             options.add_argument("--headless=new")  # Run without a GUI
             options.add_argument("--no-sandbox")
@@ -63,6 +61,8 @@ class UpdateCats:
             driver = webdriver.Safari(options=options)
         elif system == "Linux":
             # options = wedriver.get_default_chrome_options()
+            # options.binary_location = "/usr/local/bin/chromedriver"
+            # options.binary_location = "/opt/homebrew/bin/chromium"
             options = ChromeOptions()
             options.add_argument("--headless")  # Run without a GUI
             options.add_argument("--no-sandbox")
@@ -205,44 +205,44 @@ class UpdateCats:
         # reset status of all NEW cats to AVAILABLE
         Cat.objects.filter(status=CatStatus.NEW).update(status=CatStatus.AVAILABLE)
         new_cat_count = 0
-        total_cats = 0
+        total_cat_count = 0
         for kat in latest_kats:
-                # Store the results
-                obj = Cat.objects.filter(image_cy=kat.image_cy).first()
-                if obj:
-                    obj.last_seen = datetime_now
-                    # handle if cat was adopted and is now back
-                    if obj.status == CatStatus.ADOPTED:
-                        new_cat_count += 1
-                        obj.status = CatStatus.NEW
-                    obj.save()
-                else:
+            total_cat_count = total_cat_count + 1
+            # Store the results
+            obj = Cat.objects.filter(image_cy=kat.image_cy).first()
+            if obj:
+                obj.last_seen = datetime_now
+                # handle if cat was adopted and is now back
+                if obj.status == CatStatus.ADOPTED:
                     new_cat_count += 1
+                    obj.status = CatStatus.NEW
+                obj.save()
+            else:
+                new_cat_count += 1
+                #logger.info(f"Name: {kat.name} Image: {kat.image_url} Location: {kat.location}")
+                #logger.info(f"Breed: {kat.breed} Primary Color: {kat.primary_color} Sex: {kat.sex}")
+                #logger.info(f"Birthday: {kat.birthday} Intake Date: {kat.intake_date}")
+                #logger.info(f"Image Cy: {kat.image_cy}")
 
-                    #logger.info(f"Name: {kat.name} Image: {kat.image_url} Location: {kat.location}")
-                    #logger.info(f"Breed: {kat.breed} Primary Color: {kat.primary_color} Sex: {kat.sex}")
-                    #logger.info(f"Birthday: {kat.birthday} Intake Date: {kat.intake_date}")
-                    #logger.info(f"Image Cy: {kat.image_cy}")
-
-                    logger.info(f"Creating cat: {kat.name}")
-                    try:
-                        Cat.objects.create(
-                            name=kat.name,
-                            sex=kat.sex,
-                            location=kat.location,
-                            birthday=kat.birthday,
-                            breed=kat.breed,
-                            primary_color=kat.primary_color,
-                            intake_date=kat.intake_date,
-                            image_url=kat.image_url,
-                            image_cy=kat.image_cy,
-                            first_seen=datetime_now,
-                            last_seen=datetime_now,
-                            status=CatStatus.NEW,
-                        )
-                        logger.info(f"New cat added: {kat.name}")
-                    except Exception as e:
-                        logger.exception(f"Failed to create cat: {kat.name}")
+                logger.info(f"Creating cat: {kat.name}")
+                try:
+                    Cat.objects.create(
+                        name=kat.name,
+                        sex=kat.sex,
+                        location=kat.location,
+                        birthday=kat.birthday,
+                        breed=kat.breed,
+                        primary_color=kat.primary_color,
+                        intake_date=kat.intake_date,
+                        image_url=kat.image_url,
+                        image_cy=kat.image_cy,
+                        first_seen=datetime_now,
+                        last_seen=datetime_now,
+                        status=CatStatus.NEW,
+                    )
+                    logger.info(f"New cat added: {kat.name}")
+                except Exception as e:
+                    logger.exception(f"Failed to create cat: {kat.name}")
 
 
         # calculate number of cats adopted, cats not seen today and not marked as adopted
@@ -255,16 +255,17 @@ class UpdateCats:
             cat.save()
 
         logger.info(
-            f"Total cats: {total_cats} | New cats added: {new_cat_count} | Adopted cats: {adopted.count()}"
+            f"Total cats: {total_cat_count} | New cats added: {new_cat_count} | Adopted cats: {adopted.count()}"
         )
         UpdateLog.objects.create(
-            total_cats=total_cats,
+            total_cats=total_cat_count,
             new_cats=new_cat_count,
             adopted_cats=adopted.count(),
             last_updated=datetime_now,
         )
         return {
-            "Total": len(latest_kats),
+            #"Total": len(latest_kats),
+            "Total": total_cat_count,
             "New": new_cat_count,
             "Adopted": adopted.count(),
         }
