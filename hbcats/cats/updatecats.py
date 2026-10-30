@@ -177,22 +177,29 @@ class UpdateCats:
                 ))
         except WebDriverException as e:
             # this catches browser-specific errors (crash, timeout, etc.)
-            logger.error(f"Selenium Error: {str(e)}", exc_info=True)
+            logger.exception("Selenium Error")
         except Exception as e:
             # this catches non-Selenium Python errors
-            logger.error(f"General Error: {str(e)}", exc_info=True)
+            logger.exception("General Error")
         finally:
             if driver:
                 try:
                     driver.quit() # important
-                except:
-                    logger.warning("Failed to quit driver", exc_info=True)
+                except e:
+                    logger.exception("Failed to quit driver")
                     pass # already closed or crashed
 
         return latest_kats
 
     def update_cats(self):
         latest_kats = self.get_latest_animal_details()
+        total_cats = Cat.objects.filter(status__in=[CatStatus.AVAILABLE, CatStatus.NEW]).count()
+
+        # safety check! If it crashed and returned None, abort the update.
+        if not latest_kats:
+            logger.error("get_latest_animal_details returned None or empty. Aborting update.")
+            return {"Total": total_cats, "New": 0, "Adopted": 0}
+
         datetime_now = timezone.now()
         logger.info(f"{datetime_now}: Updating cats ...")
         # reset status of all NEW cats to AVAILABLE
@@ -235,7 +242,7 @@ class UpdateCats:
                         )
                         logger.info(f"New cat added: {kat.name}")
                     except Exception as e:
-                        logger.error(f"Failed to create cat: {e}")
+                        logger.exception(f"Failed to create cat: {kat.name}")
 
 
         # calculate number of cats adopted, cats not seen today and not marked as adopted
@@ -246,7 +253,6 @@ class UpdateCats:
         for cat in adopted:
             cat.status = CatStatus.ADOPTED
             cat.save()
-        total_cats = Cat.objects.filter(status__in=[CatStatus.AVAILABLE, CatStatus.NEW]).count()
 
         logger.info(
             f"Total cats: {total_cats} | New cats added: {new_cat_count} | Adopted cats: {adopted.count()}"
@@ -275,13 +281,17 @@ class UpdateCats:
             # parse the HTML
             soup = BeautifulSoup(response.text, "html.parser")
             tag = soup.find("iframe-animal")
-            animal = tag.get(":animal", "{}")
-            return json.loads(animal)
-        except httpx.HTTPStatusError as exc:
-            logger.error(f"Failed to fetch details for URL {url}: {exc}")
+            if tag:
+                animal = tag.get(":animal") or  "{}"
+                return json.loads(animal)
+            else:
+                logger.error("Did not find iframe-animal element.")
+                return {}
+        except httpx.HTTPStatusError:
+            logger.exception(f"Failed to fetch details for URL {url}")
             return {}
-        except Exception as exc:
-            logger.error(f"Unexpected error fetching details for URL {url}: {exc}")
+        except Exception:
+            logger.exception(f"Unexpected error fetching details for URL {url}")
             return {}
 
     def update_all_cat_details(self):
